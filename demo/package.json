@@ -1,0 +1,53 @@
+{
+  "name": "demo",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3",
+    "typescript": "^4.1.2",
+    "web-vitals": "^1.0.1"
+  },
+  "scripts": {
+    "add-self:js": "touch node_modules/kuknos-wallet-connect.js && echo \"module.exports = require('../..');\" > node_modules/kuknos-wallet-connect.js",
+    "add-self:ts": "touch node_modules/kuknos-wallet-connect.d.ts && echo \"import myLib from '../../';export = myLib;\" > node_modules/kuknos-wallet-connect.d.ts",
+    "remove-self:js": "rm node_modules/kuknos-wallet-connect.js",
+    "remove-self:ts": "rm node_modules/kuknos-wallet-connect.d.ts",
+    "add-self": "npm run add-self:js && npm run add-self:ts",
+    "remove-self": "npm run remove-self:js && npm run remove-self:ts",
+    "prepare": "npm run add-self",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/bs58": "^4.0.1"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "kuknos-wallet-connect",
+  "version": "1.0.2",
+  "description": "",
+  "main": "./dist/kuknos-wallet-connect.js",
+  "types": "./dist/kuknos-wallet-connect.d.ts",
+  "scripts": {
+    "dev": "tsc -m es6 --outDir dist",
+    "dev:watch": "nodemon --exec 'npm run dev || exit 1'",
+    "build": "npm run dev && uglifyjs ./dist/kuknos-wallet-connect.js -o ./dist/kuknos-wallet-connect.min.js",
+    "clean": "rm -rf dist",
+    "demo": "cd demo && npm start",
+    "docs:dev": "docsify serve docs"
+  },
+  "author": "Matin Rezakhani <matin.rezakhani@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/ed2curve": "^0.2.2",
+    "@types/libsodium-wrappers": "^0.7.9",
+    "@types/node": "^15.6.1",
+    "@types/uuid": "^8.3.3",
+    "nodemon": "^1.17.5",
+    "typescript": "^4.2.4",
+    "uglify-js": "^3.4.9"
+  },
+  "dependencies": {
+    "@types/axios": "^0.14.0",
+    "axios": "^0.21.1",
+    "docsify": "^4.12.1",
+    "ed2curve": "^0.3.0",
+    "gh-pages": "^3.2.3",
+    "js-kuknos-sdk": "0.0.9",
+    "libsodium-wrappers": "^0.7.9",
+    "react-device-detect": "^2.1.2",
+    "socket.io-client": "^4.4.0",
+    "uuid": "^8.3.2"
+  }
+}
