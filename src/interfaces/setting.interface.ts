@@ -32,7 +32,7 @@ export interface walletConnectLink{
 }
 
 export enum actionType {
-    getAccount = "account-project_id",
+    getAccount = "account-publickey",
     signData = "sign-data"
 }
 

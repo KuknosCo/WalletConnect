@@ -8,7 +8,7 @@ function App() {
 
   useEffect(()=>{
     const w = new Client('matin',{
-      relay_server_url: 'http://127.0.0.1:5000',
+      relay_server_url: 'https://relay.dev.kuknos.ir',
       wallet_type: walletType.wallet_connect
     })
     setWallet(w)   
@@ -24,10 +24,19 @@ function App() {
     setLoading(false)
   }
   
+
+  const sign = async ()=>{
+    setLoading(true)    
+    let data = await wallet?.signData('rghfsworehoire')
+    console.log('sign: ', data);
+    setLoading(false)
+  }
+
   return (
     <div className="App"> 
       {loading && <p>loading</p>}
       <button onClick={()=>{submit()}}>connect</button>
+      <button onClick={()=>{sign()}}>sign</button>
     </div>
   );
 }

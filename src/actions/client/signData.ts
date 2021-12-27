@@ -4,15 +4,16 @@ import {Response, responseStatus } from "../../interfaces/response.interface";
 import { actionType } from "../../interfaces/setting.interface";
 import { Socket } from 'socket.io-client'
 import { Request } from "../../interfaces/request.interface";
+import { Client } from "../../kuknos-wallet-connect";
 
-export async function signData_browserExtension_client(data: string): Promise<Response<SignDataResponse>>{
+export async function signData_browserExtension_client(client: Client, data: string): Promise<Response<SignDataResponse>>{
 	return new Promise((resolve, reject) => {
 		if (!data) {
 			reject("data should not be empty");
 			return;
 		}
 		let confirmWin: any = window.open(
-			`${extensionUrl}/intent/sign-data?data=${encodeURIComponent(data)}&network=${network}`,
+			`${extensionUrl}/intent/sign-data?data=${encodeURIComponent(data)}&network=${client.network}`,
 			"myWindow",
 			`width=${windowConfig.width},height=${windowConfig.height},top=${windowConfig.top},left=${windowConfig.left},scrollbars=no`
 		);
@@ -63,24 +64,27 @@ export async function signData_browserExtension_client(data: string): Promise<Re
 	});
 }
 
-export async function signData_WalletConnect_client(socket:Socket | undefined, project_id:string, data: string): Promise<Response<SignDataResponse>>{
+export async function signData_WalletConnect_client(client: Client, data: string): Promise<Response<SignDataResponse>>{
     return new Promise((resolve, reject) => {
         let wallet:any = localStorage.getItem('walletConnect_info');
         wallet = JSON.parse(wallet).wallet_id;
 
         let reqData:Request<SignDataRequest> = {
             type: actionType.signData,
-            project_id: project_id,
+            client: {
+                project_id: client.project_id,
+                meta: client.meta
+            },
             data: {
                 data: data
             }
         }
-        socket?.emit('send_data', {
+        client.socket?.emit('send_data', {
             data: reqData,
             project_id: wallet
         })
 
-        socket?.on('receive_data', (d: Response<SignDataResponse>) =>{
+        client.socket?.on('receive_data', (d: Response<SignDataResponse>) =>{            
             if(d.type === actionType.signData){
                 resolve(d)
             }

@@ -8,8 +8,13 @@ import { Socket } from 'socket.io-client'
 export function getAccount_walletConnect_wallet(socket:Socket | undefined , walletConnectLink: string, status: responseStatus, data:GetAccountResponse ){
     const req : Request = {
         type: actionType.getAccount,
-        project_id: '',
-        data: ''
+        client: {
+            meta: {},
+            project_id: ''
+        },
+        data: {
+            data: ''
+        }
     }   
 
     let clientId = ''

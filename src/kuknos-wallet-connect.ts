@@ -4,10 +4,9 @@ import { isBrowser, isMobile, isIOS, isAndroid } from 'react-device-detect';
 import { getAccount_browserExtension_client } from './actions/client/getAccount';
 import { Response } from './interfaces/response.interface';
 import { GetAccountResponse, SignDataRequest, SignDataResponse } from './interfaces/action.interface';
-import { requestFn, Request } from './interfaces/request.interface';
+import { Request, requestFn } from './interfaces/request.interface';
 import { getAccount_walletConnect_wallet } from './actions/wallet/getAccount';
 import { signData_browserExtension_client, signData_WalletConnect_client } from './actions/client/signData';
-import { signData_walletConnect_wallet } from './actions/wallet/signData';
 import {responseStatus} from './interfaces/response.interface'
 import { v4 as uuidv4 } from 'uuid';
 
@@ -19,13 +18,13 @@ export {GetAccountResponse, SignDataRequest, SignDataResponse} from './interface
 
 export class Client{
 
-    private type: walletType | undefined; 
-    private project_id: string;
-    private socket: Socket | undefined;
-    private extensionUrl: string = "https://browser-extension.kuknos.ir"
-    private relayServerUrl: string = "https://relay.kuknos.ir" 
-    private network = "public"
-    private meta: meta = {}
+    public type: walletType | undefined; 
+    public project_id: string;
+    public socket: Socket | undefined;
+    public extensionUrl: string = "https://browser-extension.kuknos.ir"
+    public relayServerUrl: string = "https://relay.kuknos.ir" 
+    public network = "public"
+    public meta: meta = {}
 
 
     constructor(link: string,options: initOptions){
@@ -63,7 +62,7 @@ export class Client{
         
     }
 
-    private setWalletInfo(){
+    public setWalletInfo(){
         this.socket?.on('receive_data' ,(d:any) =>{
             if(d.type === 'wallet_info'){                        
                 localStorage.setItem('walletConnect_info', JSON.stringify({
@@ -131,11 +130,11 @@ export class Client{
             try {
                 switch (this.type) {
                     case walletType.wallet_connect:
-                        let resW = await signData_WalletConnect_client(this.socket, this.project_id, data)
+                        let resW = await signData_WalletConnect_client(this, data)
                         resolve(resW)        
                         break;
                     case walletType.browser_extension:
-                        let resE = await signData_browserExtension_client(data)
+                        let resE = await signData_browserExtension_client(this, data)
                         resolve(resE)
                         break
                     case walletType.android:
@@ -223,23 +222,39 @@ export class Wallet{
         })
     }
 
-    public signData(fn: requestFn<SignDataRequest, SignDataResponse>){
-        switch (this.type) {
-            case walletType.wallet_connect:
-                signData_walletConnect_wallet(this.socket, fn)
-                break;
-            case walletType.browser_extension:
-                
-                break
-            case walletType.android:
-            
-                break;
-            case walletType.pwa:
 
-                break
-        }
+    onRequest(fn: requestFn){                
+        this.socket?.on('receive_data' , (data: Request)=>{            
+            fn(data.type, data.client, data.data)
+        })
     }
+
+    response(type: actionType, project_id: string, data: SignDataResponse){
+        let res: Response = {
+            status: responseStatus.submit,
+            message: '',
+            type: type,
+            data: data
+        }        
+        this.socket?.emit('send_data' , {
+            project_id: project_id,
+            data: res
+        })
+    }   
     
+    reject(type: actionType, project_id: string, message:string){
+        let res: Response = {
+            status: responseStatus.reject,
+            message: message,
+            type: type,
+            data: {}
+        }
+
+        this.socket?.emit('send_data' , {
+            project_id: project_id,
+            data: res
+        })
+    }
 }
 
 

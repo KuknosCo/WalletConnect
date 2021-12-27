@@ -1,17 +1,18 @@
+import { SignDataRequest } from "./action.interface"
 import { Response } from "./response.interface"
-import { actionType } from "./setting.interface"
+import { actionType, clientApp } from "./setting.interface"
 
 
-export interface requestFn<reqT = {}, resT = {}>{
-    ( 
-        req: reqT,
-        res: (res: resT) => void,
-        rej: (message: string) => void
+export interface requestFn<T = SignDataRequest>{
+    (   
+        type: actionType,
+        client: clientApp,
+        data: T,
     ) : void
 }
 
-export interface Request<T = {}>{
+export interface Request<T = SignDataRequest>{
     type: actionType
-    project_id: string,
+    client: clientApp
     data: T
 }
