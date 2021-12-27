@@ -14,10 +14,22 @@ export interface SignDataResponse {
 	public: string;
 	signature: string;
 }
-
 export interface SignDataRequest {
 	data: string
 }
+
+
+export interface signXdrResponse {
+	public: string;
+	xdr: string;
+	network: string
+}
+export interface signXdrRequest {
+	xdr: string;
+	network: string
+}
+
+
 
 
 

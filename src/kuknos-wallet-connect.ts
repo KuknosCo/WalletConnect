@@ -3,12 +3,13 @@ import socketIo, { Socket } from 'socket.io-client'
 import { isBrowser, isMobile, isIOS, isAndroid } from 'react-device-detect';
 import { getAccount_browserExtension_client } from './actions/client/getAccount';
 import { Response } from './interfaces/response.interface';
-import { GetAccountResponse, SignDataRequest, SignDataResponse } from './interfaces/action.interface';
+import { GetAccountResponse, SignDataRequest, SignDataResponse, signXdrResponse } from './interfaces/action.interface';
 import { Request, requestFn } from './interfaces/request.interface';
 import { getAccount_walletConnect_wallet } from './actions/wallet/getAccount';
 import { signData_browserExtension_client, signData_WalletConnect_client } from './actions/client/signData';
 import {responseStatus} from './interfaces/response.interface'
 import { v4 as uuidv4 } from 'uuid';
+import { signXdr_browserExtension_client, signXdr_WalletConnect_client } from './actions/client/signXdr';
 
 
 export {initOptions, network, walletType, actionType} from './interfaces/setting.interface'
@@ -135,6 +136,31 @@ export class Client{
                         break;
                     case walletType.browser_extension:
                         let resE = await signData_browserExtension_client(this, data)
+                        resolve(resE)
+                        break
+                    case walletType.android:
+                    
+                        break;
+                    case walletType.pwa:
+
+                        break
+                }
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    public signXdr(xdr:string): Promise<Response<signXdrResponse>>{
+        return new Promise(async (resolve, reject)=>{
+            try {
+                switch (this.type) {
+                    case walletType.wallet_connect:
+                        let resW = await signXdr_WalletConnect_client(this, xdr)
+                        resolve(resW)        
+                        break;
+                    case walletType.browser_extension:
+                        let resE = await signXdr_browserExtension_client(this, xdr)
                         resolve(resE)
                         break
                     case walletType.android:

@@ -27,8 +27,8 @@ function App() {
 
   const sign = async ()=>{
     setLoading(true)    
-    let data = await wallet?.signData('rghfsworehoire')
-    console.log('sign: ', data);
+    let data = await wallet?.signXdr('AAAAAgAAAADVcMt/03NwOelFS7cMQjqABbixZR9x/Lc2NVvUl7pLvwAAw1AAeBDHAAABhAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAAgjs2WdFrGb03nQ1u3qXIQgFseEVfyOWFWi+rNZLiQdwAAAAAAAAAAAJiWgAAAAAAAAAAA')
+    console.log('sign xdr: ', data);
     setLoading(false)
   }
 

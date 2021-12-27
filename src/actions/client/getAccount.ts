@@ -7,7 +7,7 @@ import { actionType } from "../../interfaces/setting.interface";
 export function getAccount_browserExtension_client():Promise<Response<GetAccountResponse>>{
     return new Promise((resolve , reject)=>{
         let confirmWin:any = window.open(
-            `${extensionUrl}/intent/account-project_id?network=${network}`,
+            `${extensionUrl}/intent/account-publickey?network=${network}`,
             "myWindow",
             `width=${windowConfig.width},height=${windowConfig.height},top=${windowConfig.top},left=${windowConfig.left},scrollbars=no`
         );

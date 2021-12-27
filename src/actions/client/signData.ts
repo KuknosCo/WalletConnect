@@ -13,7 +13,7 @@ export async function signData_browserExtension_client(client: Client, data: str
 			return;
 		}
 		let confirmWin: any = window.open(
-			`${extensionUrl}/intent/sign-data?data=${encodeURIComponent(data)}&network=${client.network}`,
+			`${client.extensionUrl}/intent/sign-data?data=${encodeURIComponent(data)}&network=${client.network}`,
 			"myWindow",
 			`width=${windowConfig.width},height=${windowConfig.height},top=${windowConfig.top},left=${windowConfig.left},scrollbars=no`
 		);
@@ -37,7 +37,7 @@ export async function signData_browserExtension_client(client: Client, data: str
                 const res: Response<SignDataResponse> = {
                     status: responseStatus.reject,
                     type: actionType.signData,
-                    message: 'Canceled by user',
+                    message: 'Canceled',
                     data: data.data
                 }
                 reject(res)
@@ -51,7 +51,7 @@ export async function signData_browserExtension_client(client: Client, data: str
 				const res: Response<SignDataResponse> = {
                     status: responseStatus.reject,
                     type: actionType.signData,
-                    message: 'Canceled by user',
+                    message: 'Canceled',
                     data: {
                         public: '',
                         signature :''
