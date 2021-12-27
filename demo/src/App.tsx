@@ -27,8 +27,11 @@ function App() {
 
   const sign = async ()=>{
     setLoading(true)    
-    let data = await wallet?.signXdr('AAAAAgAAAADVcMt/03NwOelFS7cMQjqABbixZR9x/Lc2NVvUl7pLvwAAw1AAeBDHAAABhAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAAgjs2WdFrGb03nQ1u3qXIQgFseEVfyOWFWi+rNZLiQdwAAAAAAAAAAAJiWgAAAAAAAAAAA')
-    console.log('sign xdr: ', data);
+    let data = await wallet?.changeTrust({
+      asset_code: 'A101',
+      type: 'add'
+    })
+    console.log('chnage trust: ', data);
     setLoading(false)
   }
 

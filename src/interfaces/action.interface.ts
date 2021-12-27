@@ -30,7 +30,19 @@ export interface signXdrRequest {
 }
 
 
+export interface changeTrustResponse {
+    public: string;
+	status: string;
+	transaction_hash: string;
+}
 
+export interface changeTrustRequest{
+    type: 'add'|'remove',
+    asset_code: string,
+    asset_issuer?: string,
+    limit?: number,
+	network?: string
+}
 
 
 
@@ -90,12 +102,7 @@ export interface accountSettingResponse {
 
 
 // change trust
-export interface changeTrustEntry{
-    type: 'add'|'remove',
-    asset_code: string,
-    asset_issuer?: string,
-    limit?: number
-}
+
 
 export interface changeTrustResponse {
     public: string;
@@ -152,17 +159,3 @@ export interface recoverAccountResponse {
 }
 
 
-//sign data
-
-
-
-//sign xdr
-export interface signXdrResponse {
-	public: string;
-	xdr: string;
-	network: string
-}
-
-
-
-//

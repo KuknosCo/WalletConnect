@@ -34,7 +34,8 @@ export interface walletConnectLink{
 export enum actionType {
     getAccount = "account-publickey",
     signData = "sign-data",
-    signXdr = "sign-xdr"
+    signXdr = "sign-xdr",
+    changeTrust = "change-trust"
 }
 
 export interface clientApp{
