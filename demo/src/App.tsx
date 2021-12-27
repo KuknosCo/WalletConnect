@@ -27,11 +27,8 @@ function App() {
 
   const sign = async ()=>{
     setLoading(true)    
-    let data = await wallet?.changeTrust({
-      asset_code: 'A101',
-      type: 'add'
-    })
-    console.log('chnage trust: ', data);
+    let data = await wallet?.createAccount('matin')
+    console.log('create account: ', data);
     setLoading(false)
   }
 

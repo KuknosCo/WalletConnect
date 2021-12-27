@@ -45,11 +45,21 @@ export interface changeTrustRequest{
 }
 
 
+export interface createAccountResponse{
+    public: string;
+	signature: string;
+}
+export interface createAccountRequest{
+    identifier: string
+}
 
 
 
 
 
+
+
+////////////////////////////////////////////////////////
 
 
 
@@ -98,22 +108,6 @@ export interface accountSettingResponse {
 		home_domain: string | undefined;
 		signers: Horizon.AccountSigner[];
 	};
-}
-
-
-// change trust
-
-
-export interface changeTrustResponse {
-    public: string;
-	status: string;
-}
-
-
-// create account
-export interface createAccountresponse{
-    public: string;
-	signature: string;
 }
 
 

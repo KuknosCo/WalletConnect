@@ -35,7 +35,8 @@ export enum actionType {
     getAccount = "account-publickey",
     signData = "sign-data",
     signXdr = "sign-xdr",
-    changeTrust = "change-trust"
+    changeTrust = "change-trust",
+    createAccount = "create-account"
 }
 
 export interface clientApp{
