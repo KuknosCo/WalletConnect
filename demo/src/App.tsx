@@ -27,7 +27,7 @@ function App() {
 
   const sign = async ()=>{
     setLoading(true)    
-    let data = await wallet?.curveDecrypt('JpupX00kWSjuzH3gic9aTEgHWLbtGzeOHkcWhA4u+R9BXacdzLSvXlNZYDLu0u3WmJJKbMpy0g==')
+    let data = await wallet?.getAccountBalance('GDKXBS372NZXAOPJIVF3ODCCHKAALOFRMUPXD7FXGY2VXVEXXJF37QYQ')
     console.log('curve de: ', data);
     setLoading(false)
   }
