@@ -100,61 +100,25 @@ export interface accountSettingResponse {
 }
 
 
-
-
-
-
-////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-// gete balance
-
-
-
-
-
-
-
-// account setting
-
-
-
-
-// curve decrypt
-
-
-
-
-// payment
-export interface paymentEntry{
+export interface paymentRequest{
     amount: number,
     destination: string,
-    memo?: string,
     asset_code: string,
+	memo?: string,
     asset_issuer?: string
+	network?: string
 }
-
-export interface paymentresponse{
+export interface paymentResponse{
     public: string;
     network: string;
 	status: string;
 	transaction_hash: string;
 }
 
-// recover account
-export interface recoverAccountResponse {
-	public: string;
-	signature: string;
-}
+
+
+
+
+
 
 

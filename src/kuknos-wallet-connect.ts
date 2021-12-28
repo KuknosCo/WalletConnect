@@ -3,7 +3,7 @@ import socketIo, { Socket } from 'socket.io-client'
 import { isBrowser, isMobile, isIOS, isAndroid } from 'react-device-detect';
 import { getAccount_browserExtension_client } from './actions/client/getAccount';
 import { Response } from './interfaces/response.interface';
-import { accountBlancesResponse, accountSettingResponse, changeTrustRequest, changeTrustResponse, createAccountResponse, curveDecryptResponse, curveEncryptRequest, curveEncryptResponse, GetAccountResponse, SignDataRequest, SignDataResponse, signXdrResponse } from './interfaces/action.interface';
+import { accountBlancesResponse, accountSettingResponse, changeTrustRequest, changeTrustResponse, createAccountResponse, curveDecryptResponse, curveEncryptRequest, curveEncryptResponse, GetAccountResponse, paymentRequest, paymentResponse, SignDataRequest, SignDataResponse, signXdrResponse } from './interfaces/action.interface';
 import { Request, requestFn } from './interfaces/request.interface';
 import { getAccount_walletConnect_wallet } from './actions/wallet/getAccount';
 import { signData_browserExtension_client, signData_WalletConnect_client } from './actions/client/signData';
@@ -16,6 +16,7 @@ import { curveEncrypt } from './actions/client/curveEncrypt';
 import { curveDecrypt_browserExtension_client, curveDecrypt_WalletConnect_client } from './actions/client/curveDecrypt';
 import { getAccountBalances } from './actions/client/getAccountBalances';
 import { getAccountSetting } from './actions/client/getAccountSetting';
+import { payment_browserExtension_client, payment_WalletConnect_client } from './actions/client/payment';
 
 
 export {initOptions, network, walletType, actionType} from './interfaces/setting.interface'
@@ -284,6 +285,31 @@ export class Client{
             try {                
                 let res = await getAccountSetting(this, publicKey)
                 resolve(res)
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    public payment(data:paymentRequest): Promise<Response<paymentResponse>>{
+        return new Promise(async (resolve, reject)=>{
+            try {
+                switch (this.type) {
+                    case walletType.wallet_connect:
+                        let resW = await payment_WalletConnect_client(this, data)
+                        resolve(resW)        
+                        break;
+                    case walletType.browser_extension:
+                        let resE = await payment_browserExtension_client(this, data)
+                        resolve(resE)
+                        break
+                    case walletType.android:
+                    
+                        break;
+                    case walletType.pwa:
+
+                        break
+                }
             } catch (error) {
                 reject(error)
             }

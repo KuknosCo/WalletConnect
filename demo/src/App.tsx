@@ -27,7 +27,12 @@ function App() {
 
   const sign = async ()=>{
     setLoading(true)    
-    let data = await wallet?.getAccountSetting('GDKXBS372NZXAOPJIVF3ODCCHKAALOFRMUPXD7FXGY2VXVEXXJF37QYQ')
+    let data = await wallet?.payment({
+      amount: 0.0001,
+      asset_code: 'PMN',
+      destination: 'GAVVARN2VDILF2HPBONMYZSP3AKOQMHV2TI57SLVF7PXSI4DJAIYTWIA',
+
+    })
     console.log('curve de: ', data);
     setLoading(false)
   }

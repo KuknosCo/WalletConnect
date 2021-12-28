@@ -40,7 +40,8 @@ export enum actionType {
     curveEncrypt = "curve-encrypt",
     curveDecrypt = "curve-decrypt",
     accountBalance = "get_balance",
-    accountSetting = "get_setting"
+    accountSetting = "get_setting",
+    payment = "payment"
 }
 
 export interface clientApp{
