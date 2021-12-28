@@ -87,6 +87,20 @@ export interface balance {
 
 
 
+export interface accountSettingResponse {
+	public: string;
+	network: string;
+	setting: {
+		thresholds: Horizon.AccountThresholds;
+		flags: Horizon.Flags;
+		inflation_destination: string | undefined;
+		home_domain: string | undefined;
+		signers: Horizon.AccountSigner[];
+	};
+}
+
+
+
 
 
 
@@ -112,20 +126,7 @@ export interface balance {
 
 
 // account setting
-export interface accountSettingEntry{
-    project_id: string
-}
-export interface accountSettingResponse {
-	public: string;
-	network: string;
-	setting: {
-		thresholds: Horizon.AccountThresholds;
-		flags: Horizon.Flags;
-		inflation_destination: string | undefined;
-		home_domain: string | undefined;
-		signers: Horizon.AccountSigner[];
-	};
-}
+
 
 
 

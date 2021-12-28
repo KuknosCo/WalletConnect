@@ -42,7 +42,7 @@ export function getAccountBalances(client: Client,publicKey: string): Promise<Re
 			});
 
             let res:Response<accountBlancesResponse> = {
-                type: actionType.getBalance,
+                type: actionType.accountBalance,
                 status: responseStatus.submit,
                 message: '',
                 data: {

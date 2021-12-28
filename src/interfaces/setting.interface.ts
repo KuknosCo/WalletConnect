@@ -39,7 +39,8 @@ export enum actionType {
     createAccount = "create-account",
     curveEncrypt = "curve-encrypt",
     curveDecrypt = "curve-decrypt",
-    getBalance = "get_balance"
+    accountBalance = "get_balance",
+    accountSetting = "get_setting"
 }
 
 export interface clientApp{

@@ -3,7 +3,7 @@ import socketIo, { Socket } from 'socket.io-client'
 import { isBrowser, isMobile, isIOS, isAndroid } from 'react-device-detect';
 import { getAccount_browserExtension_client } from './actions/client/getAccount';
 import { Response } from './interfaces/response.interface';
-import { accountBlancesResponse, changeTrustRequest, changeTrustResponse, createAccountResponse, curveDecryptResponse, curveEncryptRequest, curveEncryptResponse, GetAccountResponse, SignDataRequest, SignDataResponse, signXdrResponse } from './interfaces/action.interface';
+import { accountBlancesResponse, accountSettingResponse, changeTrustRequest, changeTrustResponse, createAccountResponse, curveDecryptResponse, curveEncryptRequest, curveEncryptResponse, GetAccountResponse, SignDataRequest, SignDataResponse, signXdrResponse } from './interfaces/action.interface';
 import { Request, requestFn } from './interfaces/request.interface';
 import { getAccount_walletConnect_wallet } from './actions/wallet/getAccount';
 import { signData_browserExtension_client, signData_WalletConnect_client } from './actions/client/signData';
@@ -15,6 +15,7 @@ import { createAccount_browserExtension_client, createAccount_WalletConnect_clie
 import { curveEncrypt } from './actions/client/curveEncrypt';
 import { curveDecrypt_browserExtension_client, curveDecrypt_WalletConnect_client } from './actions/client/curveDecrypt';
 import { getAccountBalances } from './actions/client/getAccountBalances';
+import { getAccountSetting } from './actions/client/getAccountSetting';
 
 
 export {initOptions, network, walletType, actionType} from './interfaces/setting.interface'
@@ -271,6 +272,17 @@ export class Client{
         return new Promise(async (resolve, reject)=>{
             try {                
                 let res = await getAccountBalances(this, publicKey)
+                resolve(res)
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    public getAccountSetting(publicKey: string): Promise<Response<accountSettingResponse>> {
+        return new Promise(async (resolve, reject)=>{
+            try {                
+                let res = await getAccountSetting(this, publicKey)
                 resolve(res)
             } catch (error) {
                 reject(error)
