@@ -36,7 +36,9 @@ export enum actionType {
     signData = "sign-data",
     signXdr = "sign-xdr",
     changeTrust = "change-trust",
-    createAccount = "create-account"
+    createAccount = "create-account",
+    curveEncrypt = "curve-encrypt",
+    curveDecrypt = "curve-decrypt"
 }
 
 export interface clientApp{

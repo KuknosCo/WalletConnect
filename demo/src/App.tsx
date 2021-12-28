@@ -27,10 +27,12 @@ function App() {
 
   const sign = async ()=>{
     setLoading(true)    
-    let data = await wallet?.createAccount('matin')
-    console.log('create account: ', data);
+    let data = await wallet?.curveDecrypt('JpupX00kWSjuzH3gic9aTEgHWLbtGzeOHkcWhA4u+R9BXacdzLSvXlNZYDLu0u3WmJJKbMpy0g==')
+    console.log('curve de: ', data);
     setLoading(false)
   }
+
+  //JpupX00kWSjuzH3gic9aTEgHWLbtGzeOHkcWhA4u+R9BXacdzLSvXlNZYDLu0u3WmJJKbMpy0g==
 
   return (
     <div className="App"> 

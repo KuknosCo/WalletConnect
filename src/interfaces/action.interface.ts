@@ -4,7 +4,6 @@ import { Horizon } from "js-kuknos-sdk";
 
 
 
-
 export interface GetAccountResponse{
     public: string;
 }
@@ -35,7 +34,6 @@ export interface changeTrustResponse {
 	status: string;
 	transaction_hash: string;
 }
-
 export interface changeTrustRequest{
     type: 'add'|'remove',
     asset_code: string,
@@ -53,6 +51,23 @@ export interface createAccountRequest{
     identifier: string
 }
 
+
+export interface curveEncryptResponse{
+    cipher_text: string;
+}
+export interface curveEncryptRequest{
+    plain_text: string,
+    publickey: string
+}
+
+
+export interface curveDecryptResponse{
+    public: string;
+	plain_text: string;
+}
+export interface curveDecryptRequest{
+	cipher_text: string;
+}
 
 
 
@@ -113,21 +128,8 @@ export interface accountSettingResponse {
 
 
 // curve decrypt
-export interface curveDecryptResponse{
-    public: string;
-	data: string;
-}
 
 
-//curve encrypt
-export interface curveEncryptEntry{
-    data: string,
-    project_id: string
-}
-
-export interface curveEncryptResponse{
-    ciphertext: string;
-}
 
 
 // payment
