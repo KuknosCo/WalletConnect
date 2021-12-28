@@ -1,6 +1,4 @@
 export enum walletType {
-    pwa = "pwa",
-    android = "android",
     browser_extension = "browser_extension",
     wallet_connect = "wallet_connect"
 }

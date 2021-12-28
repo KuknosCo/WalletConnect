@@ -3,7 +3,7 @@ import e2c from "ed2curve";
 import sodium_api from "libsodium-wrappers";
 import { curveDecryptResponse, curveEncryptRequest, curveEncryptResponse } from "../../interfaces/action.interface";
 import { Response, responseStatus } from "../../interfaces/response.interface";
-import { actionType } from "../../kuknos-wallet-connect";
+import { actionType } from "../../interfaces/setting.interface";
 
 export async function curveEncrypt(data: curveEncryptRequest):Promise<Response<curveEncryptResponse>> {
 	return new Promise(async (resolve, reject) => {

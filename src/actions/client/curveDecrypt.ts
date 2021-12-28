@@ -67,7 +67,11 @@ export async function curveDecrypt_browserExtension_client(client: Client, ciphe
 export async function curveDecrypt_WalletConnect_client(client: Client, cipherText: string): Promise<Response<curveDecryptResponse>>{
     return new Promise((resolve, reject) => {
         let wallet:any = localStorage.getItem('walletConnect_info');
-        wallet = JSON.parse(wallet).wallet_id;
+        try {
+            wallet = JSON.parse(wallet).wallet_id;
+        } catch (error) {
+            throw new Error('No wallet found. First, connect to a wallet')
+        }
 
         let reqData:Request<curveDecryptRequest> = {
             type: actionType.curveDecrypt,

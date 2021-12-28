@@ -71,7 +71,11 @@ export function payment_browserExtension_client(client: Client, data:paymentRequ
 export async function payment_WalletConnect_client(client: Client, data: paymentRequest): Promise<Response<paymentResponse>>{
     return new Promise((resolve, reject) => {
         let wallet:any = localStorage.getItem('walletConnect_info');
-        wallet = JSON.parse(wallet).wallet_id;
+        try {
+            wallet = JSON.parse(wallet).wallet_id;
+        } catch (error) {
+            throw new Error('No wallet found. First, connect to a wallet')
+        }
 
 
 

@@ -17,11 +17,10 @@ import { curveDecrypt_browserExtension_client, curveDecrypt_WalletConnect_client
 import { getAccountBalances } from './actions/client/getAccountBalances';
 import { getAccountSetting } from './actions/client/getAccountSetting';
 import { payment_browserExtension_client, payment_WalletConnect_client } from './actions/client/payment';
+import {network} from './interfaces/setting.interface'
 
-
-export {initOptions, network, walletType, actionType} from './interfaces/setting.interface'
-export {responseStatus} from './interfaces/response.interface'
-export {GetAccountResponse, SignDataRequest, SignDataResponse} from './interfaces/action.interface'
+export * from './interfaces/action.interface'
+export * from './interfaces/setting.interface'
 
 
 export class Client{
@@ -35,7 +34,7 @@ export class Client{
     public meta: meta = {}
 
 
-    constructor(link: string,options: initOptions){
+    constructor(options: initOptions){
         
         this.project_id = uuidv4();     
         if(options.browser_extension_url){
@@ -70,7 +69,15 @@ export class Client{
         
     }
 
-    public setWalletInfo(){
+    public setNetwork(network:network ){
+        this.network = network
+    }
+
+    public setWalletType(walletType: walletType ){
+        this.type = walletType
+    }
+
+    private setWalletInfo(){
         this.socket?.on('receive_data' ,(d:any) =>{
             if(d.type === 'wallet_info'){                        
                 localStorage.setItem('walletConnect_info', JSON.stringify({
@@ -81,16 +88,20 @@ export class Client{
         })
     }
 
+    public getConnectedWalletInfo(){        
+        let wallet:any = localStorage.getItem('walletConnect_info');
+        try {
+            wallet = JSON.parse(wallet)
+            return wallet
+        } catch (error) {
+            throw new Error('No wallet found. First, connect to a wallet')
+        }
+    }
+
     public availableWallets(): Array<walletType>{
         let wallets: Array<walletType> = [walletType.wallet_connect];
         if(isBrowser && !isMobile){
             wallets.push(walletType.browser_extension);
-        }
-        if(isMobile && isIOS){
-            wallets.push(walletType.pwa)
-        }
-        if(isMobile && isAndroid){
-            wallets.push(walletType.android)
         }
         return wallets
     }
@@ -119,12 +130,6 @@ export class Client{
                         let data = await getAccount_browserExtension_client()
                         resolve(data)
                         break
-                    case walletType.android:
-                    
-                        break;
-                    case walletType.pwa:
-
-                        break
                 }
             } catch (error) {
                 reject(error)
@@ -145,12 +150,7 @@ export class Client{
                         let resE = await signData_browserExtension_client(this, data)
                         resolve(resE)
                         break
-                    case walletType.android:
                     
-                        break;
-                    case walletType.pwa:
-
-                        break
                 }
             } catch (error) {
                 reject(error)
@@ -170,12 +170,7 @@ export class Client{
                         let resE = await changeTrust_browserExtension_client(this, data)
                         resolve(resE)
                         break
-                    case walletType.android:
                     
-                        break;
-                    case walletType.pwa:
-
-                        break
                 }
             } catch (error) {
                 reject(error)
@@ -195,12 +190,7 @@ export class Client{
                         let resE = await signXdr_browserExtension_client(this, xdr)
                         resolve(resE)
                         break
-                    case walletType.android:
                     
-                        break;
-                    case walletType.pwa:
-
-                        break
                 }
             } catch (error) {
                 reject(error)
@@ -220,12 +210,7 @@ export class Client{
                         let resE = await createAccount_browserExtension_client(this, xdr)
                         resolve(resE)
                         break
-                    case walletType.android:
                     
-                        break;
-                    case walletType.pwa:
-
-                        break
                 }
             } catch (error) {
                 reject(error)
@@ -256,12 +241,7 @@ export class Client{
                         let resE = await curveDecrypt_browserExtension_client(this, cipherText)
                         resolve(resE)
                         break
-                    case walletType.android:
                     
-                        break;
-                    case walletType.pwa:
-
-                        break
                 }
             } catch (error) {
                 reject(error)
@@ -303,12 +283,7 @@ export class Client{
                         let resE = await payment_browserExtension_client(this, data)
                         resolve(resE)
                         break
-                    case walletType.android:
                     
-                        break;
-                    case walletType.pwa:
-
-                        break
                 }
             } catch (error) {
                 reject(error)
@@ -422,21 +397,3 @@ export class Wallet{
         })
     }
 }
-
-
-
-/* export default {
-    getAccountproject_id,
-    getAccountBalances,
-    createAccount,
-    changeTrust,
-    curveEncrypt,
-    curveDecrypt,
-    signXdr,
-    signData,
-    recoverExtenstionAccount,
-    getAccountSetting,
-    payment,
-    setNetwork,
-    setExtensionUrl
-} */

@@ -67,7 +67,11 @@ export async function signData_browserExtension_client(client: Client, data: str
 export async function signData_WalletConnect_client(client: Client, data: string): Promise<Response<SignDataResponse>>{
     return new Promise((resolve, reject) => {
         let wallet:any = localStorage.getItem('walletConnect_info');
-        wallet = JSON.parse(wallet).wallet_id;
+        try {
+            wallet = JSON.parse(wallet).wallet_id;
+        } catch (error) {
+            throw new Error('No wallet found. First, connect to a wallet')
+        }
 
         let reqData:Request<SignDataRequest> = {
             type: actionType.signData,

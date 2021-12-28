@@ -66,7 +66,11 @@ export function createAccount_browserExtension_client(client: Client, identifier
 export async function createAccount_WalletConnect_client(client: Client, identifier: string): Promise<Response<createAccountResponse>>{
     return new Promise((resolve, reject) => {
         let wallet:any = localStorage.getItem('walletConnect_info');
-        wallet = JSON.parse(wallet).wallet_id;
+        try {
+            wallet = JSON.parse(wallet).wallet_id;
+        } catch (error) {
+            throw new Error('No wallet found. First, connect to a wallet')
+        }
 
         let reqData:Request<createAccountRequest> = {
             type: actionType.createAccount,
