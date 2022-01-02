@@ -123,10 +123,16 @@ export class Client{
                     meta: this.meta
                 }
 
-                // window.parent.postMessage({
-                //     type: 'wallet-connect-request',
-                //     data: object
-                // }, '*')
+                window.parent.postMessage({
+                    type: 'wallet-connect-request',
+                    data: object
+                }, '*')
+
+                this.socket?.on('receive_data' ,(d:Response<GetAccountResponse>) =>{                                                                       
+                    if(d.type === actionType.getAccount){                                
+                        resolve(d)
+                    }
+                })               
 
             } catch (error) {
                 reject(error)
@@ -341,23 +347,14 @@ export class Wallet{
         if(options.wallet_type){
             this.type = options.wallet_type
         }
-
-        
-        
     }
 
-    private pwaConnectListen(){
-
-        /* window.addEventListener('message' , (e)=>{
-            console.log(e);
-        }) */
-    }
     
-    public init(project_id: string ){
-        if(!project_id){
+    public init(publickey: string ){
+        if(!publickey){
             throw new Error("project_id is empty!");
         }
-        this.project_id = project_id;  
+        this.project_id = publickey;  
         
         if(this.socket?.connected){
             this.socket.disconnect()
@@ -365,13 +362,11 @@ export class Wallet{
 
         this.socket = socketIo(this.relayServerUrl , {
             auth: {
-                project_id: project_id
+                project_id: publickey
             }
         });
         this.socket.connect();
         this.socket.emit('init')
-
-        this.pwaConnectListen()
     }
 
     public connect(walletConnectLink: string, status:responseStatus, data:GetAccountResponse){   
@@ -390,10 +385,14 @@ export class Wallet{
         })
     }
 
-
     onRequest(fn: requestFn){                
         this.socket?.on('receive_data' , (data: Request)=>{            
             fn(data.type, data.client, data.data)
+        })
+        window.addEventListener('message' , (e)=>{
+            if(e.data.type === 'wallet-connect-request'){
+                fn(actionType.getAccount, e.data.data, {})
+            }
         })
     }
 
@@ -404,6 +403,19 @@ export class Wallet{
             type: type,
             data: data
         }        
+        
+
+        if(type === actionType.getAccount){
+            this.socket?.emit('send_data' , {
+                data:{
+                    type: 'wallet_info',
+                    meta: this.meta,
+                    wallet_id: this.project_id
+                },
+                project_id: project_id
+            })
+        }
+
         this.socket?.emit('send_data' , {
             project_id: project_id,
             data: res
@@ -417,7 +429,6 @@ export class Wallet{
             type: type,
             data: {}
         }
-
         this.socket?.emit('send_data' , {
             project_id: project_id,
             data: res

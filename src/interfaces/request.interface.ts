@@ -3,7 +3,7 @@ import { Response } from "./response.interface"
 import { actionType, clientApp } from "./setting.interface"
 
 
-export interface requestFn<T = SignDataRequest>{
+export interface requestFn<T = SignDataRequest | {}>{
     (   
         type: actionType,
         client: clientApp,
