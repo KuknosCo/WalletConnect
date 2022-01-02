@@ -1,4 +1,4 @@
-import * as KuknosSdk from "js-kuknos-sdk";
+import * as KuknosSdk from "stellar-sdk";
 import { horizon } from "./../../config/config";
 import {  windowConfig  } from "../../config/config";
 import { accountBlancesResponse, accountSettingResponse, curveDecryptRequest, curveDecryptResponse, GetAccountResponse, SignDataRequest, SignDataResponse } from "../../interfaces/action.interface";

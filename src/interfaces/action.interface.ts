@@ -1,6 +1,4 @@
-import { Horizon } from "js-kuknos-sdk";
-
-
+import { Horizon } from "stellar-sdk";
 
 
 

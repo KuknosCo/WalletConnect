@@ -115,6 +115,25 @@ export class Client{
         return 'wc-kuknos://'+link
     }
 
+    public connectPhone():Promise<Response<GetAccountResponse>>{
+        return new Promise(async (resolve, reject)=>{
+            try {
+                const object: walletConnectLink = {
+                    project_id: this.project_id,
+                    meta: this.meta
+                }
+
+                // window.parent.postMessage({
+                //     type: 'wallet-connect-request',
+                //     data: object
+                // }, '*')
+
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
     public connect():Promise<Response<GetAccountResponse>>{
         return new Promise(async (resolve, reject)=>{
             try {
@@ -302,7 +321,6 @@ export class Wallet{
     private network = "public"
     private meta: meta = {}
 
-
     constructor(options: initOptions){
        
              
@@ -328,6 +346,13 @@ export class Wallet{
         
     }
 
+    private pwaConnectListen(){
+
+        /* window.addEventListener('message' , (e)=>{
+            console.log(e);
+        }) */
+    }
+    
     public init(project_id: string ){
         if(!project_id){
             throw new Error("project_id is empty!");
@@ -345,6 +370,8 @@ export class Wallet{
         });
         this.socket.connect();
         this.socket.emit('init')
+
+        this.pwaConnectListen()
     }
 
     public connect(walletConnectLink: string, status:responseStatus, data:GetAccountResponse){   

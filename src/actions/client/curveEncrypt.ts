@@ -1,4 +1,4 @@
-import * as kuknusSdk from "js-kuknos-sdk";
+import * as kuknusSdk from "stellar-sdk";
 import e2c from "ed2curve";
 import sodium_api from "libsodium-wrappers";
 import { curveDecryptResponse, curveEncryptRequest, curveEncryptResponse } from "../../interfaces/action.interface";
