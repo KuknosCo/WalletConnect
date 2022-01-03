@@ -25,7 +25,7 @@ export * from './interfaces/setting.interface'
 
 export class Client{
 
-    public type: walletType | undefined; 
+    public type: walletType = walletType.wallet_connect
     public project_id: string;
     public socket: Socket | undefined;
     public extensionUrl: string = "https://browser-extension.kuknos.ir"
@@ -319,7 +319,7 @@ export class Client{
 }
 
 export class Wallet{
-    private type: walletType | undefined; 
+    private type: walletType = walletType.wallet_connect
     private project_id: string | undefined;
     private socket: Socket | undefined;
     private extensionUrl: string = "https://browser-extension.kuknos.ir"
