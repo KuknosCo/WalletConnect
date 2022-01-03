@@ -37,7 +37,8 @@ export interface changeTrustRequest{
     asset_code: string,
     asset_issuer?: string,
     limit?: number,
-	network?: string
+	network?: string,
+	asset_image_url?: string
 }
 
 
