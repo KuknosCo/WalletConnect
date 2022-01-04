@@ -39,7 +39,8 @@ export enum actionType {
     curveDecrypt = "curve-decrypt",
     accountBalance = "get_balance",
     accountSetting = "get_setting",
-    payment = "payment"
+    payment = "payment",
+    buyToken = "buy-token"
 }
 
 export interface clientApp{

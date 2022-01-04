@@ -114,6 +114,14 @@ export interface paymentResponse{
 	transaction_hash: string;
 }
 
+export interface BuyTokenRequest{
+    amount: number,
+	asset_code: string 
+}
+export interface BuyTokenResponse{
+    link: string;
+}
+
 
 
 

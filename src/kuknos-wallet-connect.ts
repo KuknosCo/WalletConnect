@@ -3,7 +3,7 @@ import socketIo, { Socket } from 'socket.io-client'
 import { isBrowser, isMobile, isIOS, isAndroid } from 'react-device-detect';
 import { getAccount_browserExtension_client } from './actions/client/getAccount';
 import { Response } from './interfaces/response.interface';
-import { accountBlancesResponse, accountSettingResponse, changeTrustRequest, changeTrustResponse, createAccountResponse, curveDecryptResponse, curveEncryptRequest, curveEncryptResponse, GetAccountResponse, paymentRequest, paymentResponse, SignDataRequest, SignDataResponse, signXdrResponse } from './interfaces/action.interface';
+import { accountBlancesResponse, accountSettingResponse, changeTrustRequest, changeTrustResponse, createAccountResponse, curveDecryptResponse, curveEncryptRequest, curveEncryptResponse, GetAccountResponse, paymentRequest, paymentResponse, SignDataRequest, SignDataResponse, signXdrResponse, BuyTokenRequest, BuyTokenResponse } from './interfaces/action.interface';
 import { Request, requestFn } from './interfaces/request.interface';
 import { getAccount_walletConnect_wallet } from './actions/wallet/getAccount';
 import { signData_browserExtension_client, signData_WalletConnect_client } from './actions/client/signData';
@@ -18,6 +18,7 @@ import { getAccountBalances } from './actions/client/getAccountBalances';
 import { getAccountSetting } from './actions/client/getAccountSetting';
 import { payment_browserExtension_client, payment_WalletConnect_client } from './actions/client/payment';
 import {network} from './interfaces/setting.interface'
+import { buyToken_WalletConnect_client } from './actions/client/buyToken';
 
 export * from './interfaces/action.interface'
 export * from './interfaces/setting.interface'
@@ -309,6 +310,21 @@ export class Client{
                         resolve(resE)
                         break
                     
+                }
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    public buyToken(data:BuyTokenRequest): Promise<Response<BuyTokenResponse>>{
+        return new Promise(async (resolve, reject)=>{
+            try {
+                switch (this.type) {
+                    case walletType.wallet_connect:
+                        let resW = await buyToken_WalletConnect_client(this, data)
+                        resolve(resW)        
+                        break;
                 }
             } catch (error) {
                 reject(error)
