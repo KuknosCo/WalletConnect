@@ -7,7 +7,7 @@ function App() {
   const [wallet, setWallet] = useState<Client>();
 
   useEffect(()=>{
-    const w = new Client('matin',{
+    const w = new Client({
       relay_server_url: 'https://relay.dev.kuknos.ir',
       wallet_type: walletType.wallet_connect
     })
@@ -18,25 +18,16 @@ function App() {
   const submit = async ()=>{
     setLoading(true)
     console.log(wallet?.getWalletConnectLink());
-    
     let account = await wallet?.connect()
     console.log('account: ', account);
     setLoading(false)
   }
   
 
-  const sign = async ()=>{
-    setLoading(true)    
-    let data = await wallet?.createAccount('matin')
-    console.log('create account: ', data);
-    setLoading(false)
-  }
-
   return (
     <div className="App"> 
       {loading && <p>loading</p>}
       <button onClick={()=>{submit()}}>connect</button>
-      <button onClick={()=>{sign()}}>sign</button>
     </div>
   );
 }

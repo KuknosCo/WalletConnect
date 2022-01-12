@@ -1,8 +1,9 @@
-import { actionType, Client } from "../../kuknos-wallet-connect";
+import {  Client } from "../../kuknos-wallet-connect";
 import {  windowConfig } from "../../config/config";
 import {Response, responseStatus } from "../../interfaces/response.interface";
 import { signXdrResponse, signXdrRequest } from "./../../interfaces/action.interface";
 import { Request } from "../../interfaces/request.interface";
+import {actionType} from './../../interfaces/setting.interface'
 
 export async function signXdr_browserExtension_client(client: Client, xdr: string): Promise<Response<signXdrResponse>> {
 	return new Promise((resolve, reject) => {
@@ -55,7 +56,11 @@ export async function signXdr_browserExtension_client(client: Client, xdr: strin
 export async function signXdr_WalletConnect_client(client: Client, xdr: string): Promise<Response<signXdrResponse>>{
     return new Promise((resolve, reject) => {
         let wallet:any = localStorage.getItem('walletConnect_info');
-        wallet = JSON.parse(wallet).wallet_id;
+        try {
+            wallet = JSON.parse(wallet).wallet_id;
+        } catch (error) {
+            throw new Error('No wallet found. First, connect to a wallet')
+        }
 
         let reqData:Request<signXdrRequest> = {
             type: actionType.signXdr,

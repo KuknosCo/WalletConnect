@@ -1,6 +1,4 @@
 export enum walletType {
-    pwa = "pwa",
-    android = "android",
     browser_extension = "browser_extension",
     wallet_connect = "wallet_connect"
 }
@@ -36,7 +34,13 @@ export enum actionType {
     signData = "sign-data",
     signXdr = "sign-xdr",
     changeTrust = "change-trust",
-    createAccount = "create-account"
+    createAccount = "create-account",
+    curveEncrypt = "curve-encrypt",
+    curveDecrypt = "curve-decrypt",
+    accountBalance = "get_balance",
+    accountSetting = "get_setting",
+    payment = "payment",
+    buyToken = "buy-token"
 }
 
 export interface clientApp{

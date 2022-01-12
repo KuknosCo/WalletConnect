@@ -1,7 +1,4 @@
-import { Horizon } from "js-kuknos-sdk";
-
-
-
+import { Horizon } from "stellar-sdk";
 
 
 
@@ -35,13 +32,13 @@ export interface changeTrustResponse {
 	status: string;
 	transaction_hash: string;
 }
-
 export interface changeTrustRequest{
     type: 'add'|'remove',
     asset_code: string,
     asset_issuer?: string,
     limit?: number,
-	network?: string
+	network?: string,
+	asset_image_url?: string
 }
 
 
@@ -54,25 +51,24 @@ export interface createAccountRequest{
 }
 
 
+export interface curveEncryptResponse{
+    cipher_text: string;
+}
+export interface curveEncryptRequest{
+    plain_text: string,
+    publickey: string
+}
 
 
+export interface curveDecryptResponse{
+    public: string;
+	plain_text: string;
+}
+export interface curveDecryptRequest{
+	cipher_text: string;
+}
 
 
-
-////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-// gete balance
 export interface accountBlancesResponse{
     public: string;
 	network: string;
@@ -90,14 +86,6 @@ export interface balance {
 
 
 
-
-
-
-
-// account setting
-export interface accountSettingEntry{
-    project_id: string
-}
 export interface accountSettingResponse {
 	public: string;
 	network: string;
@@ -111,45 +99,33 @@ export interface accountSettingResponse {
 }
 
 
-
-// curve decrypt
-export interface curveDecryptResponse{
-    public: string;
-	data: string;
-}
-
-
-//curve encrypt
-export interface curveEncryptEntry{
-    data: string,
-    project_id: string
-}
-
-export interface curveEncryptResponse{
-    ciphertext: string;
-}
-
-
-// payment
-export interface paymentEntry{
+export interface paymentRequest{
     amount: number,
     destination: string,
-    memo?: string,
     asset_code: string,
+	memo?: string,
     asset_issuer?: string
+	network?: string
 }
-
-export interface paymentresponse{
+export interface paymentResponse{
     public: string;
     network: string;
 	status: string;
 	transaction_hash: string;
 }
 
-// recover account
-export interface recoverAccountResponse {
-	public: string;
-	signature: string;
+export interface BuyTokenRequest{
+    amount: number,
+	asset_code: string 
 }
+export interface BuyTokenResponse{
+    link: string;
+}
+
+
+
+
+
+
 
 

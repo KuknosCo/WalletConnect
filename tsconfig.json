@@ -4,7 +4,7 @@
     "target": "es6",                          /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */
     "module": "commonjs",                     /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
     "lib": ["es2015", "dom"],                 /* Specify library files to be included in the compilation. */
-    "allowJs": true,                       /* Allow javascript files to be compiled. */
+    "allowJs": true,                          /* Allow javascript files to be compiled. */
     // "checkJs": true,                       /* Report errors in .js files. */
     // "jsx": "preserve",                     /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
     "declaration": true,                      /* Generates corresponding '.d.ts' file. */
@@ -12,7 +12,7 @@
     "declarationDir": "./dist",               /* Output directory for generated declaration files. */
     "sourceMap": true,                        /* Generates corresponding '.map' file. */
     // "outFile": "./",                       /* Concatenate and emit output to single file. */
-    "outDir": "./dist/",                      /* Redirect output structure to the directory. */
+    "outDir": "dist",                         /* Redirect output structure to the directory. */
     // "rootDir": "./",                       /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
     // "composite": true,                     /* Enable project compilation */
     // "removeComments": true,                /* Do not emit comments to output. */
@@ -35,7 +35,6 @@
     // "noUnusedParameters": true,            /* Report errors on unused parameters. */
     // "noImplicitReturns": true,             /* Report error when not all code paths in function return a value. */
     // "noFallthroughCasesInSwitch": true,    /* Report errors for fallthrough cases in switch statement. */
-
     /* Module Resolution Options */
     "moduleResolution": "node",            /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
     // "extensionUrl": "./",                       /* Base directory to resolve non-absolute module names. */
@@ -66,52 +65,16 @@
     "node_modules",
     "dist",
     "demo",
-    "demo2",
     "**/*.test.ts",
     "**/webpack.config.ts"
   ],
   "compilation": {
     "compiler": {
-      "context": "./src/kuknos-browser-intent-sdk.ts",
+      "context": "./src/kuknos-wallet-connect.ts",
       "outputPath": "./dist"
     }
   }
 }
 
-// {
-//   "compilerOptions": {
-//     "target": "es5",
-//     "lib": ["dom", "dom.iterable", "esnext"],
-//     "allowJs": true,
-//     "skipLibCheck": true,
-//     "esModuleInterop": true,
-//     "allowSyntheticDefaultImports": true,
-//     "strict": true,
-//     "forceConsistentCasingInFileNames": true,
-//     "module": "esnext",
-//     "moduleResolution": "node",
-//     "resolveJsonModule": true,
-//     "isolatedModules": true,
-//     "noEmit": true,
-//     "jsx": "react",
-//     "declaration": true, 
-//     "declarationDir": "./dist", 
-//     "sourceMap": true,  
-//     "outDir": "./dist/",               
-//   },
-//   "include": ["src"],
-//   "exclude": [
-//     "node_modules",
-//     "dist",
-//     "demo",
-//     "**/*.test.ts",
-//     "**/webpack.config.ts"
-//   ],
-//   "compilation": {
-//     "compiler": {
-//       "context": "./src/kuknos-browser-intent-sdk.ts",
-//       "outputPath": "./dist"
-//     }
-//   }
-// }
- 
+
+
