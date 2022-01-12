@@ -224,16 +224,16 @@ export class Client{
         })
     }
 
-    public createAccount(xdr:string): Promise<Response<createAccountResponse>>{
+    public createAccount(identifier:string): Promise<Response<createAccountResponse>>{
         return new Promise(async (resolve, reject)=>{
             try {
                 switch (this.type) {
                     case walletType.wallet_connect:
-                        let resW = await createAccount_WalletConnect_client(this, xdr)
+                        let resW = await createAccount_WalletConnect_client(this, identifier)
                         resolve(resW)        
                         break;
                     case walletType.browser_extension:
-                        let resE = await createAccount_browserExtension_client(this, xdr)
+                        let resE = await createAccount_browserExtension_client(this, identifier)
                         resolve(resE)
                         break
                     
