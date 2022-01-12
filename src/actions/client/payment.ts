@@ -74,7 +74,7 @@ export async function payment_WalletConnect_client(client: Client, data: payment
         try {
             wallet = JSON.parse(wallet).wallet_id;
         } catch (error) {
-            throw new Error('No wallet found. First, connect to a wallet')
+            throw new Error('Wallet not found. Connect to the wallet first')
         }
 
 

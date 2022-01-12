@@ -70,7 +70,7 @@ export async function curveDecrypt_WalletConnect_client(client: Client, cipherTe
         try {
             wallet = JSON.parse(wallet).wallet_id;
         } catch (error) {
-            throw new Error('No wallet found. First, connect to a wallet')
+            throw new Error('Wallet not found. Connect to the wallet first')
         }
 
         let reqData:Request<curveDecryptRequest> = {
