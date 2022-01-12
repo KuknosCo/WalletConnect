@@ -70,6 +70,46 @@ export class Client{
         
     }
 
+    private ping(type:actionType):Promise<boolean>{
+        return new Promise((resolve, reject)=>{
+            if(this.type != walletType.wallet_connect) resolve(true)
+            const rejectObj: Response<null>= {
+                status: responseStatus.reject,
+                type: type,
+                message: 'Wallet not found. Connect to the wallet first',
+                data: null
+            }
+            try {
+                let wallet:any = localStorage.getItem('walletConnect_info');
+                wallet = JSON.parse(wallet).wallet_id;
+
+                let reqData:Request<null> = {
+                    type: actionType.ping,
+                    client: {
+                        project_id: this.project_id,
+                        meta: this.meta
+                    },
+                    data : null
+                }
+                this.socket?.emit('send_data', {
+                    data: reqData,
+                    project_id: wallet
+                })
+
+                this.socket?.on('receive_data' ,(d:Response) =>{                                                                                  
+                    if(d.type === actionType.ping){
+                        resolve(true)
+                    }
+                })
+                setTimeout(()=>{
+                    reject(rejectObj)
+                },1500)
+            } catch (error) {
+                reject(rejectObj)
+            }
+        })
+    }
+
     public setNetwork(network:network ){
         this.network = network
     }
@@ -95,16 +135,8 @@ export class Client{
             wallet = JSON.parse(wallet)
             return wallet
         } catch (error) {
-            throw new Error('No wallet found. First, connect to a wallet')
+            throw new Error('Wallet not found. Connect to the wallet first')
         }
-    }
-
-    public availableWallets(): Array<walletType>{
-        let wallets: Array<walletType> = [walletType.wallet_connect];
-        if(isBrowser && !isMobile){
-            wallets.push(walletType.browser_extension);
-        }
-        return wallets
     }
 
     public getWalletConnectLink():string{
@@ -167,6 +199,7 @@ export class Client{
     public signData(data:string): Promise<Response<SignDataResponse>>{
         return new Promise(async (resolve, reject)=>{
             try {
+                await this.ping(actionType.signData)
                 switch (this.type) {
                     case walletType.wallet_connect:
                         let resW = await signData_WalletConnect_client(this, data)
@@ -187,6 +220,7 @@ export class Client{
     public changeTrust(data:changeTrustRequest): Promise<Response<changeTrustResponse>>{
         return new Promise(async (resolve, reject)=>{
             try {
+                await this.ping(actionType.changeTrust)
                 switch (this.type) {
                     case walletType.wallet_connect:
                         let resW = await changeTrust_WalletConnect_client(this, data)
@@ -207,6 +241,7 @@ export class Client{
     public signXdr(xdr:string): Promise<Response<signXdrResponse>>{
         return new Promise(async (resolve, reject)=>{
             try {
+                await this.ping(actionType.signXdr)
                 switch (this.type) {
                     case walletType.wallet_connect:
                         let resW = await signXdr_WalletConnect_client(this, xdr)
@@ -227,6 +262,7 @@ export class Client{
     public createAccount(identifier:string): Promise<Response<createAccountResponse>>{
         return new Promise(async (resolve, reject)=>{
             try {
+                await this.ping(actionType.createAccount)
                 switch (this.type) {
                     case walletType.wallet_connect:
                         let resW = await createAccount_WalletConnect_client(this, identifier)
@@ -258,6 +294,7 @@ export class Client{
     public curveDecrypt(cipherText:string): Promise<Response<curveDecryptResponse>>{
         return new Promise(async (resolve, reject)=>{
             try {
+                await this.ping(actionType.curveDecrypt)
                 switch (this.type) {
                     case walletType.wallet_connect:
                         let resW = await curveDecrypt_WalletConnect_client(this, cipherText)
@@ -300,6 +337,7 @@ export class Client{
     public payment(data:paymentRequest): Promise<Response<paymentResponse>>{
         return new Promise(async (resolve, reject)=>{
             try {
+                await this.ping(actionType.payment)
                 switch (this.type) {
                     case walletType.wallet_connect:
                         let resW = await payment_WalletConnect_client(this, data)
@@ -320,6 +358,7 @@ export class Client{
     public buyToken(data:BuyTokenRequest): Promise<Response<BuyTokenResponse>>{
         return new Promise(async (resolve, reject)=>{
             try {
+                await this.ping(actionType.buyToken)
                 switch (this.type) {
                     case walletType.wallet_connect:
                         let resW = await buyToken_WalletConnect_client(this, data)
@@ -401,9 +440,14 @@ export class Wallet{
         })
     }
 
-    onRequest(fn: requestFn){                
-        this.socket?.on('receive_data' , (data: Request)=>{            
-            fn(data.type, data.client, data.data)
+    onRequest(fn: requestFn){
+        this.socket?.on('receive_data' , (data: Request)=>{   
+            if(data.type == actionType.ping){
+                this.response(data.type, data.client.project_id , '')
+            }else{
+                fn(data.type, data.client, data.data)
+            }        
+            
         })
         window.addEventListener('message' , (e)=>{
             if(e.data.type === 'wallet-connect-request'){
@@ -412,7 +456,7 @@ export class Wallet{
         })
     }
 
-    response(type: actionType, project_id: string, data: SignDataResponse){
+    response(type: actionType, project_id: string, data: SignDataResponse | ''){
         let res: Response = {
             status: responseStatus.submit,
             message: '',
