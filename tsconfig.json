@@ -58,7 +58,12 @@
 
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+
+    "paths": {
+      "uri":["./node_modules/url/"],
+      "https": ["./node_modules/https-browserify"]
+    }
 
   },
   "exclude": [
