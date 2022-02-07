@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "axios": "^0.24.0",
+    "buffer": "^6.0.3",
     "crypto-js": "^4.1.1",
     "docsify": "^4.12.1",
     "ed2curve": "^0.3.0",
