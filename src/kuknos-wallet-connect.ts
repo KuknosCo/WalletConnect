@@ -19,6 +19,7 @@ import { getAccountSetting } from './actions/client/getAccountSetting';
 import { payment_browserExtension_client, payment_WalletConnect_client } from './actions/client/payment';
 import {network} from './interfaces/setting.interface'
 import { buyToken_WalletConnect_client } from './actions/client/buyToken';
+import {Buffer} from 'buffer'
 
 export * from './interfaces/action.interface'
 export * from './interfaces/setting.interface'
