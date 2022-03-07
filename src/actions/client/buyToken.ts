@@ -10,7 +10,7 @@ import { Client } from "../../kuknos-wallet-connect";
 
 export async function buyToken_WalletConnect_client(client: Client, data: BuyTokenRequest): Promise<Response<BuyTokenResponse>>{
     return new Promise((resolve, reject) => {
-        let wallet:any = localStorage.getItem('walletConnect_info');
+        let wallet:any = localStorage.getItem('walletConnect_wallet');
         try {
             wallet = JSON.parse(wallet).wallet_id;
         } catch (error) {

@@ -55,7 +55,7 @@ export async function signXdr_browserExtension_client(client: Client, xdr: strin
 
 export async function signXdr_WalletConnect_client(client: Client, xdr: string): Promise<Response<signXdrResponse>>{
     return new Promise((resolve, reject) => {
-        let wallet:any = localStorage.getItem('walletConnect_info');
+        let wallet:any = localStorage.getItem('walletConnect_wallet');
         try {
             wallet = JSON.parse(wallet).wallet_id;
         } catch (error) {

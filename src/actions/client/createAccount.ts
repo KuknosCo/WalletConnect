@@ -65,7 +65,7 @@ export function createAccount_browserExtension_client(client: Client, identifier
 
 export async function createAccount_WalletConnect_client(client: Client, identifier: string): Promise<Response<createAccountResponse>>{
     return new Promise((resolve, reject) => {
-        let wallet:any = localStorage.getItem('walletConnect_info');
+        let wallet:any = localStorage.getItem('walletConnect_wallet');
         try {
             wallet = JSON.parse(wallet).wallet_id;
         } catch (error) {
