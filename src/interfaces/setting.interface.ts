@@ -1,6 +1,7 @@
 export enum walletType {
     browser_extension = "browser_extension",
-    wallet_connect = "wallet_connect"
+    wallet_connect = "wallet_connect",
+    phone = "phone"
 }
 
 export enum network{
@@ -43,10 +44,17 @@ export enum actionType {
     buyToken = "buy-token",
 
     ping = 'ping',
+    walletConnectRequest = 'wallet-connect-request'
 }
 
 export interface clientApp{
     project_id: string,
     meta: meta
+}
+
+export interface ConnectionStatusFn{
+    (   
+        status: boolean,
+    ) : void
 }
 

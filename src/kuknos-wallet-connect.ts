@@ -1,4 +1,4 @@
-import { actionType, initOptions, meta, walletConnectLink, walletType } from './interfaces/setting.interface'
+import { actionType, initOptions, meta, walletConnectLink, walletType, ConnectionStatusFn } from './interfaces/setting.interface'
 import socketIo, { Socket } from 'socket.io-client'
 import { isBrowser, isMobile, isIOS, isAndroid } from 'react-device-detect';
 import { getAccount_browserExtension_client } from './actions/client/getAccount';
@@ -20,6 +20,8 @@ import { payment_browserExtension_client, payment_WalletConnect_client } from '.
 import {network} from './interfaces/setting.interface'
 import { buyToken_WalletConnect_client } from './actions/client/buyToken';
 import {Buffer} from 'buffer'
+import queryString from 'query-string'
+
 
 export * from './interfaces/action.interface'
 export * from './interfaces/setting.interface'
@@ -34,17 +36,44 @@ export class Client{
     public relayServerUrl: string = "https://relay.kuknos.ir" 
     public network = "public"
     public meta: meta = {}
+    public connectionStatus: boolean = false
 
 
     constructor(options: initOptions){
+        const savedType = localStorage.getItem('walletConnect_type')
+        const savedNetwork = localStorage.getItem('walletConnect_network')
+
+        this.project_id = uuidv4();
+
+
+        if(savedNetwork){
+            this.network = savedNetwork
+        }else if(options.network){
+            this.network = options.network
+        }
+        localStorage.setItem('walletConnect_network', this.network)
+
+
+        if(savedType){
+
+            if(savedType === walletType.browser_extension){
+                this.type = walletType.browser_extension
+            }else if(savedType === walletType.phone){
+                this.type = walletType.phone
+            }else{
+                this.type = walletType.wallet_connect
+            }
+
+        }else if(options.wallet_type){
+            this.type = options.wallet_type
+        }
+        localStorage.setItem('walletConnect_type', this.type)
         
-        this.project_id = uuidv4();     
+            
         if(options.browser_extension_url){
             this.extensionUrl = options.browser_extension_url
         }
-        if(options.network){
-            this.network = options.network
-        }
+        
         if(options.relay_server_url){
             this.relayServerUrl = options.relay_server_url
         }
@@ -53,12 +82,8 @@ export class Client{
             this.meta = options.meta
         }
 
+
         this.meta.url = window.location.origin
-
-        if(options.wallet_type){
-            this.type = options.wallet_type
-        }
-
 
         this.socket = socketIo(this.relayServerUrl,  {
             auth: {
@@ -68,20 +93,19 @@ export class Client{
         this.socket.connect();
         this.socket.emit('init')
         this.setWalletInfo()
-        
     }
 
     private ping(type:actionType):Promise<boolean>{
         return new Promise((resolve, reject)=>{
-            if(this.type != walletType.wallet_connect) resolve(true)
+            if(this.type == walletType.browser_extension) resolve(true)
             const rejectObj: Response<null>= {
                 status: responseStatus.reject,
                 type: type,
-                message: 'Wallet not found. Connect to the wallet first',
+                message: 'Wallet not available.',
                 data: null
             }
             try {
-                let wallet:any = localStorage.getItem('walletConnect_info');
+                let wallet:any = localStorage.getItem('walletConnect_wallet');
                 wallet = JSON.parse(wallet).wallet_id;
 
                 let reqData:Request<null> = {
@@ -97,7 +121,7 @@ export class Client{
                     project_id: wallet
                 })
 
-                this.socket?.on('receive_data' ,(d:Response) =>{                                                                                  
+                this.socket?.on('receive_data' ,(d:Response) =>{                                                             
                     if(d.type === actionType.ping){
                         resolve(true)
                     }
@@ -111,18 +135,10 @@ export class Client{
         })
     }
 
-    public setNetwork(network:network ){
-        this.network = network
-    }
-
-    public setWalletType(walletType: walletType ){
-        this.type = walletType
-    }
-
     private setWalletInfo(){
         this.socket?.on('receive_data' ,(d:any) =>{
             if(d.type === 'wallet_info'){                        
-                localStorage.setItem('walletConnect_info', JSON.stringify({
+                localStorage.setItem('walletConnect_wallet', JSON.stringify({
                     meta: d.meta,
                     wallet_id: d.wallet_id
                 }))
@@ -130,14 +146,40 @@ export class Client{
         })
     }
 
-    public getConnectedWalletInfo(){        
-        let wallet:any = localStorage.getItem('walletConnect_info');
+    private getWalletInfo(){        
+        let wallet:any = localStorage.getItem('walletConnect_wallet');        
         try {
             wallet = JSON.parse(wallet)
             return wallet
         } catch (error) {
             throw new Error('Wallet not found. Connect to the wallet first')
         }
+    }
+
+    public onConnectionStatusChange(fn: ConnectionStatusFn){
+        this.socket?.on('connect', ()=>{
+            if(!this.connectionStatus){
+                this.connectionStatus = true
+                fn(this.connectionStatus)
+            }
+        })
+
+        this.socket?.on('disconnect', ()=>{
+            if(this.connectionStatus){
+                this.connectionStatus = false
+                fn(this.connectionStatus)
+            }
+        })
+    }
+
+    public setNetwork(network:network ){
+        this.network = network
+        localStorage.setItem('walletConnect_network', network)
+    }
+
+    public setWalletType(walletType: walletType ){
+        this.type = walletType
+        localStorage.setItem('walletConnect_type', walletType)
     }
 
     public getWalletConnectLink():string{
@@ -149,44 +191,77 @@ export class Client{
         return 'wc-kuknos://'+link
     }
 
-    public connectPhone():Promise<Response<GetAccountResponse>>{
-        return new Promise(async (resolve, reject)=>{
-            try {
-                const object: walletConnectLink = {
-                    project_id: this.project_id,
-                    meta: this.meta
-                }
-
-                window.parent.postMessage({
-                    type: 'wallet-connect-request',
-                    data: object
-                }, '*')
-
-                this.socket?.on('receive_data' ,(d:Response<GetAccountResponse>) =>{                                                                       
-                    if(d.type === actionType.getAccount){                                
-                        resolve(d)
-                    }
-                })               
-
-            } catch (error) {
-                reject(error)
-            }
-        })
-    }
-
     public connect():Promise<Response<GetAccountResponse>>{
         return new Promise(async (resolve, reject)=>{
+
+            // const wallet = this.getWalletInfo()
+            // if(wallet && wallet.wallet_id){
+            //     try {
+            //         const response:Response<GetAccountResponse> = {
+            //             data: {
+            //                 public: wallet.wallet_id
+            //             },
+            //             status: responseStatus.submit,
+            //             message: '',
+            //             type: actionType.getAccount
+            //         }
+            //         await this.ping(actionType.getAccount);
+            //         resolve(response)
+            //     } catch (error) {
+            //         reject(error)
+            //     }
+            // }
+             
+
+            if(this.type === walletType.phone){
+                try {         
+                    let reqData:Request<null> = {
+                        type: actionType.walletConnectRequest,
+                        client: {
+                            meta: this.meta,
+                            project_id: this.project_id
+                        },
+                        data: null
+                    }
+                    const param = queryString.parseUrl(window.location.href)
+                    this.socket?.emit('send_data', {
+                        data: reqData,
+                        project_id: param.query.walletUUID,
+                    })
+                    
+                } catch (error) {}
+            }
+            
             try {
+                
                 switch (this.type) {
                     case walletType.wallet_connect:
-                        this.socket?.on('receive_data' ,(d:Response<GetAccountResponse>) =>{                                                                                  
-                            if(d.type === actionType.getAccount){                                
+                        this.socket?.on('receive_data' ,(d:Response<GetAccountResponse>) =>{                                                                                                              
+                            if(d.type === actionType.getAccount){  
+                                localStorage.setItem('walletConnect_connected', 'true')
+                                localStorage.setItem('walletConnect_network', this.network)   
+                                localStorage.setItem('walletConnect_type', this.type)                                                           
                                 resolve(d)
                             }
                         })               
                         break;
+
+                    case walletType.phone:
+                        this.socket?.on('receive_data' ,(d:Response<GetAccountResponse>) =>{                                                                                  
+                            if(d.type === actionType.getAccount){  
+                                localStorage.setItem('walletConnect_connected', 'true')
+                                localStorage.setItem('walletConnect_network', this.network)  
+                                localStorage.setItem('walletConnect_type', this.type)                      
+                                resolve(d)
+                            }
+                        })               
+                        break;
+
                     case walletType.browser_extension:
                         let data = await getAccount_browserExtension_client()
+                        localStorage.setItem('walletConnect_connected', 'true')
+                        localStorage.setItem('walletConnect_network', this.network)
+                        localStorage.setItem('walletConnect_type', this.type) 
                         resolve(data)
                         break
                 }
@@ -197,14 +272,31 @@ export class Client{
     
     }
 
+    public disconnect():Promise<void>{
+        return new Promise((resolve)=>{
+            localStorage.removeItem('walletConnect_connected')
+            localStorage.removeItem('walletConnect_type')
+            localStorage.removeItem('walletConnect_network')
+            localStorage.removeItem('walletConnect_wallet')
+            resolve()
+        })
+    }
+
+
+    // actions
+
     public signData(data:string): Promise<Response<SignDataResponse>>{
         return new Promise(async (resolve, reject)=>{
-            try {
+            try {                
                 await this.ping(actionType.signData)
                 switch (this.type) {
                     case walletType.wallet_connect:
                         let resW = await signData_WalletConnect_client(this, data)
                         resolve(resW)        
+                        break;
+                    case walletType.phone:
+                        let resP = await signData_WalletConnect_client(this, data)
+                        resolve(resP)        
                         break;
                     case walletType.browser_extension:
                         let resE = await signData_browserExtension_client(this, data)
@@ -227,6 +319,10 @@ export class Client{
                         let resW = await changeTrust_WalletConnect_client(this, data)
                         resolve(resW)        
                         break;
+                    case walletType.phone:
+                        let resP = await changeTrust_WalletConnect_client(this, data)
+                        resolve(resP)        
+                        break;
                     case walletType.browser_extension:
                         let resE = await changeTrust_browserExtension_client(this, data)
                         resolve(resE)
@@ -248,6 +344,10 @@ export class Client{
                         let resW = await signXdr_WalletConnect_client(this, xdr)
                         resolve(resW)        
                         break;
+                    case walletType.phone:
+                        let resP = await signXdr_WalletConnect_client(this, xdr)
+                        resolve(resP)        
+                        break;
                     case walletType.browser_extension:
                         let resE = await signXdr_browserExtension_client(this, xdr)
                         resolve(resE)
@@ -268,6 +368,10 @@ export class Client{
                     case walletType.wallet_connect:
                         let resW = await createAccount_WalletConnect_client(this, identifier)
                         resolve(resW)        
+                        break;
+                    case walletType.phone:
+                        let resP = await createAccount_WalletConnect_client(this, identifier)
+                        resolve(resP)        
                         break;
                     case walletType.browser_extension:
                         let resE = await createAccount_browserExtension_client(this, identifier)
@@ -300,6 +404,10 @@ export class Client{
                     case walletType.wallet_connect:
                         let resW = await curveDecrypt_WalletConnect_client(this, cipherText)
                         resolve(resW)        
+                        break;
+                    case walletType.phone:
+                        let resP = await curveDecrypt_WalletConnect_client(this, cipherText)
+                        resolve(resP)        
                         break;
                     case walletType.browser_extension:
                         let resE = await curveDecrypt_browserExtension_client(this, cipherText)
@@ -344,6 +452,10 @@ export class Client{
                         let resW = await payment_WalletConnect_client(this, data)
                         resolve(resW)        
                         break;
+                    case walletType.wallet_connect:
+                        let resP = await payment_WalletConnect_client(this, data)
+                        resolve(resP)        
+                        break;
                     case walletType.browser_extension:
                         let resE = await payment_browserExtension_client(this, data)
                         resolve(resE)
@@ -364,6 +476,10 @@ export class Client{
                     case walletType.wallet_connect:
                         let resW = await buyToken_WalletConnect_client(this, data)
                         resolve(resW)        
+                        break;
+                    case walletType.wallet_connect:
+                        let resP = await buyToken_WalletConnect_client(this, data)
+                        resolve(resP)        
                         break;
                 }
             } catch (error) {
