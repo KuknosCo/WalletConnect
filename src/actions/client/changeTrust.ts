@@ -73,7 +73,7 @@ export function changeTrust_browserExtension_client(client: Client, data:changeT
 
 export async function changeTrust_WalletConnect_client(client: Client, data: changeTrustRequest): Promise<Response<changeTrustResponse>>{
     return new Promise((resolve, reject) => {
-        let wallet:any = localStorage.getItem('walletConnect_info');
+        let wallet:any = localStorage.getItem('walletConnect_wallet');
         
         try {
             wallet = JSON.parse(wallet).wallet_id;
