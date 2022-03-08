@@ -20,9 +20,9 @@ export function getAccount_browserExtension_client():Promise<Response<GetAccount
                     message: '',
                     data: data.data
                 }
-                resolve(res)
                 window.removeEventListener("message", handleResponse);
                 confirmWin.close();
+                resolve(res)
             }
     
             if (data.status === responseStatus.reject) {

@@ -25,9 +25,9 @@ export function createAccount_browserExtension_client(client: Client, identifier
                     message: '',
                     data: data.data
                 }
-                resolve(res)
                 window.removeEventListener("message", handleResponse);
                 confirmWin.close();
+                resolve(res)
             }
 			
             if (data.status === responseStatus.reject) {

@@ -25,9 +25,9 @@ export async function signXdr_browserExtension_client(client: Client, xdr: strin
                     message: '',
                     data: data.data
                 }
-                resolve(res)
                 window.removeEventListener("message", handleResponse);
                 confirmWin.close();
+                resolve(res)
             }
 			
             if (data.status === responseStatus.reject) {
