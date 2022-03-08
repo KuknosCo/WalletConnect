@@ -156,20 +156,31 @@ export class Client{
         }
     }
 
-    public onConnectionStatusChange(fn: ConnectionStatusFn){
-        this.socket?.on('connect', ()=>{
-            if(!this.connectionStatus){
-                this.connectionStatus = true
-                fn(this.connectionStatus)
-            }
+    public async onConnectionStatusChange(fn: ConnectionStatusFn){
+        /* this.socket?.on('connect', ()=>{
+            this.connectionStatus = true
+            fn(this.connectionStatus)
         })
 
         this.socket?.on('disconnect', ()=>{
-            if(this.connectionStatus){
-                this.connectionStatus = false
-                fn(this.connectionStatus)
+            this.connectionStatus = false
+            fn(this.connectionStatus)
+        }) */
+
+        setInterval(async()=>{
+            try {
+                await this.ping(actionType.getAccount)
+                if(!this.connectionStatus){
+                    this.connectionStatus = true
+                    fn(this.connectionStatus)
+                }
+            } catch (error) {
+                if(this.connectionStatus){
+                    this.connectionStatus = false
+                    fn(this.connectionStatus)
+                }
             }
-        })
+        },1000 )
     }
 
     public setNetwork(network:network ){

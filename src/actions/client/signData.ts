@@ -26,9 +26,9 @@ export async function signData_browserExtension_client(client: Client, data: str
                     message: '',
                     data: data.data
                 }
-                resolve(res)
                 window.removeEventListener("message", handleResponse);
                 confirmWin.close();
+                resolve(res)
             }
 			
             if (data.status === responseStatus.reject) {

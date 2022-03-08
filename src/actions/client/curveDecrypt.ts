@@ -26,9 +26,9 @@ export async function curveDecrypt_browserExtension_client(client: Client, ciphe
                     message: '',
                     data: data.data
                 }
-                resolve(res)
                 window.removeEventListener("message", handleResponse);
                 confirmWin.close();
+                resolve(res)
             }
 			
             if (data.status === responseStatus.reject) {
