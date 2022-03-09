@@ -25,12 +25,12 @@ export async function buyToken_WalletConnect_client(client: Client, data: BuyTok
             },
             data: data
         }
-        client.socket?.emit('send_data', {
+        client.socket?.emit('walletConnect:send_data', {
             data: reqData,
             project_id: wallet
         })
 
-        client.socket?.on('receive_data', (d: Response<BuyTokenResponse>) =>{            
+        client.socket?.on('walletConnect:receive_data', (d: Response<BuyTokenResponse>) =>{            
             if(d.type === actionType.buyToken){
                 resolve(d)
             }

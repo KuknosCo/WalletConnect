@@ -83,12 +83,12 @@ export async function curveDecrypt_WalletConnect_client(client: Client, cipherTe
                cipher_text :  cipherText
             }
         }
-        client.socket?.emit('send_data', {
+        client.socket?.emit('walletConnect:send_data', {
             data: reqData,
             project_id: wallet
         })
 
-        client.socket?.on('receive_data', (d: Response<curveDecryptResponse>) =>{            
+        client.socket?.on('walletConnect:receive_data', (d: Response<curveDecryptResponse>) =>{            
             if(d.type === actionType.curveDecrypt){
                 resolve(d)
             }
