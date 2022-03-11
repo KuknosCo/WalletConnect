@@ -85,13 +85,12 @@ export class Client{
 
         this.meta.url = window.location.origin
 
-        this.socket = socketIo(this.relayServerUrl,  {
-            extraHeaders:{
+        this.socket = socketIo(this.relayServerUrl+'/walletConnect',  {
+            auth:{
                 project_id: this.project_id
-            }
+            },
         });
         this.socket.connect();
-        this.socket.emit('init')
         this.setWalletInfo()
     }
 
@@ -116,12 +115,12 @@ export class Client{
                     },
                     data : null
                 }
-                this.socket?.emit('walletConnect:send_data', {
+                this.socket?.emit('send_data', {
                     data: reqData,
                     project_id: wallet
                 })
 
-                this.socket?.on('walletConnect:receive_data' ,(d:Response) =>{                                                             
+                this.socket?.on('receive_data' ,(d:Response) =>{                                                             
                     if(d.type === actionType.ping){
                         resolve(true)
                     }
@@ -136,7 +135,7 @@ export class Client{
     }
 
     private setWalletInfo(){
-        this.socket?.on('walletConnect:receive_data' ,(d:any) =>{
+        this.socket?.on('receive_data' ,(d:any) =>{
             if(d.type === 'wallet_info'){                        
                 localStorage.setItem('walletConnect_wallet', JSON.stringify({
                     meta: d.meta,
@@ -235,7 +234,7 @@ export class Client{
                         data: null
                     }
                     const param = queryString.parseUrl(window.location.href)
-                    this.socket?.emit('walletConnect:send_data', {
+                    this.socket?.emit('send_data', {
                         data: reqData,
                         project_id: param.query.walletUUID,
                     })
@@ -247,7 +246,7 @@ export class Client{
                 
                 switch (this.type) {
                     case walletType.wallet_connect:
-                        this.socket?.on('walletConnect:receive_data' ,(d:Response<GetAccountResponse>) =>{                                                                                                              
+                        this.socket?.on('receive_data' ,(d:Response<GetAccountResponse>) =>{                                                                                                              
                             if(d.type === actionType.getAccount){  
                                 localStorage.setItem('walletConnect_connected', 'true')
                                 localStorage.setItem('walletConnect_network', this.network)   
@@ -258,7 +257,7 @@ export class Client{
                         break;
 
                     case walletType.phone:
-                        this.socket?.on('walletConnect:receive_data' ,(d:Response<GetAccountResponse>) =>{                                                                                  
+                        this.socket?.on('receive_data' ,(d:Response<GetAccountResponse>) =>{                                                                                  
                             if(d.type === actionType.getAccount){  
                                 localStorage.setItem('walletConnect_connected', 'true')
                                 localStorage.setItem('walletConnect_network', this.network)  
@@ -542,14 +541,13 @@ export class Wallet{
         if(this.socket?.connected){
             this.socket.disconnect()
         }
-
-        this.socket = socketIo(this.relayServerUrl , {
-            extraHeaders: {
+        
+        this.socket = socketIo(this.relayServerUrl+'/walletConnect' , {
+            auth: {
                 project_id: publickey
-            }
+            },
         });
         this.socket.connect();
-        this.socket.emit('init')
     }
 
     public connect(walletConnectLink: string, status:responseStatus, data:GetAccountResponse){   
@@ -558,7 +556,7 @@ export class Wallet{
         link = JSON.parse(link) 
         let clientId = link.project_id
         getAccount_walletConnect_wallet(this.socket, walletConnectLink, status, data)
-        this.socket?.emit('walletConnect:send_data' , {
+        this.socket?.emit('send_data' , {
             data:{
                 type: 'wallet_info',
                 meta: this.meta,
@@ -569,7 +567,7 @@ export class Wallet{
     }
 
     onRequest(fn: requestFn){
-        this.socket?.on('walletConnect:receive_data' , (data: Request)=>{   
+        this.socket?.on('receive_data' , (data: Request)=>{   
             if(data.type == actionType.ping){
                 this.response(data.type, data.client.project_id , '')
             }else{
@@ -594,7 +592,7 @@ export class Wallet{
         
 
         if(type === actionType.getAccount){
-            this.socket?.emit('walletConnect:send_data' , {
+            this.socket?.emit('send_data' , {
                 data:{
                     type: 'wallet_info',
                     meta: this.meta,
@@ -604,7 +602,7 @@ export class Wallet{
             })
         }
 
-        this.socket?.emit('walletConnect:send_data' , {
+        this.socket?.emit('send_data' , {
             project_id: project_id,
             data: res
         })
@@ -617,7 +615,7 @@ export class Wallet{
             type: type,
             data: {}
         }
-        this.socket?.emit('walletConnect:send_data' , {
+        this.socket?.emit('send_data' , {
             project_id: project_id,
             data: res
         })

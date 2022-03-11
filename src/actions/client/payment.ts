@@ -90,12 +90,12 @@ export async function payment_WalletConnect_client(client: Client, data: payment
                 network: data.network ? data.network : client.network
             }
         }
-        client.socket?.emit('walletConnect:send_data', {
+        client.socket?.emit('send_data', {
             data: reqData,
             project_id: wallet
         })
 
-        client.socket?.on('walletConnect:receive_data', (d: Response<paymentResponse>) =>{            
+        client.socket?.on('receive_data', (d: Response<paymentResponse>) =>{            
             if(d.type === actionType.payment){
                 resolve(d)
             }

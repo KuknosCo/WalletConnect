@@ -35,7 +35,7 @@ export function getAccount_walletConnect_wallet(socket:Socket | undefined , wall
             type: actionType.getAccount
         }
 
-        socket?.emit('walletConnect:send_data' , {
+        socket?.emit('send_data' , {
             data: d,
             project_id: clientId,
         })
@@ -51,7 +51,7 @@ export function getAccount_walletConnect_wallet(socket:Socket | undefined , wall
             status: responseStatus.reject,
             type: actionType.getAccount
         }
-        socket?.emit('walletConnect:send_data' , {
+        socket?.emit('send_data' , {
             data: d,
             project_id: clientId, 
         })

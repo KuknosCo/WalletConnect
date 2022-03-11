@@ -94,12 +94,12 @@ export async function changeTrust_WalletConnect_client(client: Client, data: cha
                 network: data.network ? data.network : client.network
             }
         }
-        client.socket?.emit('walletConnect:send_data', {
+        client.socket?.emit('send_data', {
             data: reqData,
             project_id: wallet
         })
 
-        client.socket?.on('walletConnect:receive_data', (d: Response<changeTrustResponse>) =>{            
+        client.socket?.on('receive_data', (d: Response<changeTrustResponse>) =>{            
             if(d.type === actionType.changeTrust){
                 resolve(d)
             }

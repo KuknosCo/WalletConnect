@@ -82,12 +82,12 @@ export async function createAccount_WalletConnect_client(client: Client, identif
                 identifier: identifier
             }
         }
-        client.socket?.emit('walletConnect:send_data', {
+        client.socket?.emit('send_data', {
             data: reqData,
             project_id: wallet
         })
 
-        client.socket?.on('walletConnect:receive_data', (d: Response<createAccountResponse>) =>{            
+        client.socket?.on('receive_data', (d: Response<createAccountResponse>) =>{            
             if(d.type === actionType.createAccount){
                 resolve(d)
             }

@@ -83,12 +83,12 @@ export async function signData_WalletConnect_client(client: Client, data: string
                 data: data
             }
         }
-        client.socket?.emit('walletConnect:send_data', {
+        client.socket?.emit('send_data', {
             data: reqData,
             project_id: wallet
         })
 
-        client.socket?.on('walletConnect:receive_data', (d: Response<SignDataResponse>) =>{            
+        client.socket?.on('receive_data', (d: Response<SignDataResponse>) =>{            
             if(d.type === actionType.signData){
                 resolve(d)
             }

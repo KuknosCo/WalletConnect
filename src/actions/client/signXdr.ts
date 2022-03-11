@@ -73,12 +73,12 @@ export async function signXdr_WalletConnect_client(client: Client, xdr: string):
                 network: client.network
             }
         }
-        client.socket?.emit('walletConnect:send_data', {
+        client.socket?.emit('send_data', {
             data: reqData,
             project_id: wallet
         })
 
-        client.socket?.on('walletConnect:receive_data', (d: Response<signXdrResponse>) =>{            
+        client.socket?.on('receive_data', (d: Response<signXdrResponse>) =>{            
             if(d.type === actionType.signXdr){
                 resolve(d)
             }
