@@ -455,14 +455,14 @@ export class Client{
 
     public payment(data:paymentRequest): Promise<Response<paymentResponse>>{
         return new Promise(async (resolve, reject)=>{
-            try {
+            try {                
                 await this.ping(actionType.payment)
                 switch (this.type) {
                     case walletType.wallet_connect:
                         let resW = await payment_WalletConnect_client(this, data)
                         resolve(resW)        
                         break;
-                    case walletType.wallet_connect:
+                    case walletType.phone:
                         let resP = await payment_WalletConnect_client(this, data)
                         resolve(resP)        
                         break;
@@ -487,7 +487,7 @@ export class Client{
                         let resW = await buyToken_WalletConnect_client(this, data)
                         resolve(resW)        
                         break;
-                    case walletType.wallet_connect:
+                    case walletType.phone:
                         let resP = await buyToken_WalletConnect_client(this, data)
                         resolve(resP)        
                         break;
