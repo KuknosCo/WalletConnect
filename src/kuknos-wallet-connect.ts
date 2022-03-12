@@ -508,6 +508,7 @@ export class Wallet{
     private relayServerUrl: string = "https://relay.kuknos.ir" 
     private network = "public"
     private meta: meta = {}
+    private walletAvailable: boolean = true;
 
     constructor(options: initOptions){
        
@@ -566,12 +567,21 @@ export class Wallet{
         })
     }
 
+    public setWalletAvailableStatus(available: boolean){
+        this.walletAvailable = available;
+    }
+
     onRequest(fn: requestFn){
         this.socket?.on('receive_data' , (data: Request)=>{   
             if(data.type == actionType.ping){
-                this.response(data.type, data.client.project_id , '')
+                if(this.walletAvailable){
+                    this.response(data.type, data.client.project_id , '')
+                }
             }else{
-                fn(data.type, data.client, data.data)
+                if(this.walletAvailable){
+                    fn(data.type, data.client, data.data)
+                }
+                
             }        
             
         })
