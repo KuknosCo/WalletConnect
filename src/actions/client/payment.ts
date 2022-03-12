@@ -90,6 +90,7 @@ export async function payment_WalletConnect_client(client: Client, data: payment
                 network: data.network ? data.network : client.network
             }
         }
+        
         client.socket?.emit('send_data', {
             data: reqData,
             project_id: wallet

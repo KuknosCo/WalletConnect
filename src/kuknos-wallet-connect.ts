@@ -65,7 +65,7 @@ export class Client{
             }
 
         }else if(options.wallet_type){
-            this.type = options.wallet_type
+            this.type = options.wallet_type 
         }
         localStorage.setItem('walletConnect_type', this.type)
         
@@ -85,13 +85,12 @@ export class Client{
 
         this.meta.url = window.location.origin
 
-        this.socket = socketIo(this.relayServerUrl,  {
-            auth: {
+        this.socket = socketIo(this.relayServerUrl+'/walletConnect',  {
+            auth:{
                 project_id: this.project_id
-            }
+            },
         });
         this.socket.connect();
-        this.socket.emit('init')
         this.setWalletInfo()
     }
 
@@ -456,14 +455,14 @@ export class Client{
 
     public payment(data:paymentRequest): Promise<Response<paymentResponse>>{
         return new Promise(async (resolve, reject)=>{
-            try {
+            try {                
                 await this.ping(actionType.payment)
                 switch (this.type) {
                     case walletType.wallet_connect:
                         let resW = await payment_WalletConnect_client(this, data)
                         resolve(resW)        
                         break;
-                    case walletType.wallet_connect:
+                    case walletType.phone:
                         let resP = await payment_WalletConnect_client(this, data)
                         resolve(resP)        
                         break;
@@ -488,7 +487,7 @@ export class Client{
                         let resW = await buyToken_WalletConnect_client(this, data)
                         resolve(resW)        
                         break;
-                    case walletType.wallet_connect:
+                    case walletType.phone:
                         let resP = await buyToken_WalletConnect_client(this, data)
                         resolve(resP)        
                         break;
@@ -509,6 +508,7 @@ export class Wallet{
     private relayServerUrl: string = "https://relay.kuknos.ir" 
     private network = "public"
     private meta: meta = {}
+    private walletAvailable: boolean = true;
 
     constructor(options: initOptions){
        
@@ -542,14 +542,13 @@ export class Wallet{
         if(this.socket?.connected){
             this.socket.disconnect()
         }
-
-        this.socket = socketIo(this.relayServerUrl , {
+        
+        this.socket = socketIo(this.relayServerUrl+'/walletConnect' , {
             auth: {
                 project_id: publickey
-            }
+            },
         });
         this.socket.connect();
-        this.socket.emit('init')
     }
 
     public connect(walletConnectLink: string, status:responseStatus, data:GetAccountResponse){   
@@ -568,12 +567,21 @@ export class Wallet{
         })
     }
 
+    public setWalletAvailableStatus(available: boolean){
+        this.walletAvailable = available;
+    }
+
     onRequest(fn: requestFn){
         this.socket?.on('receive_data' , (data: Request)=>{   
             if(data.type == actionType.ping){
-                this.response(data.type, data.client.project_id , '')
+                if(this.walletAvailable){
+                    this.response(data.type, data.client.project_id , '')
+                }
             }else{
-                fn(data.type, data.client, data.data)
+                if(this.walletAvailable){
+                    fn(data.type, data.client, data.data)
+                }
+                
             }        
             
         })
