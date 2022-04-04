@@ -268,7 +268,7 @@ export class Client{
                         break;
 
                     case walletType.browser_extension:
-                        let data = await getAccount_browserExtension_client()
+                        let data = await getAccount_browserExtension_client(this)
                         localStorage.setItem('walletConnect_connected', 'true')
                         localStorage.setItem('walletConnect_network', this.network)
                         localStorage.setItem('walletConnect_type', this.type) 
