@@ -4,6 +4,7 @@
   "description": "",
   "main": "./dist/src/kuknos-wallet-connect.js",
   "types": "./dist/src/kuknos-wallet-connect.d.ts",
+  "files": ["dist/*.js", "dist/**/*.js", "dist/*.ts", "dist/**/*.ts"],
   "scripts": {
     "dev": "tsc -m es6 --outDir dist",
     "dev:watch": "nodemon --exec 'npm run dev || exit 1'",
