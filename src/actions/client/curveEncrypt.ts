@@ -4,17 +4,18 @@ import sodium_api from "libsodium-wrappers";
 import { curveDecryptResponse, curveEncryptRequest, curveEncryptResponse } from "../../interfaces/action.interface";
 import { Response, responseStatus } from "../../interfaces/response.interface";
 import { actionType } from "../../interfaces/setting.interface";
+global.Buffer = global.Buffer || require("buffer").Buffer;
 
 export async function curveEncrypt(data: curveEncryptRequest):Promise<Response<curveEncryptResponse>> {
 	return new Promise(async (resolve, reject) => {
 		let publickey = data.publickey;
 		let plainText = data.plain_text
-        
-		try {
+		
+		try {			
 			let pub: any = publickey;
 			await sodium_api.ready;
 			plainText = JSON.stringify(plainText);
-			var buf = Buffer.from(plainText);
+			var buf = Buffer.from(plainText);			
 			pub = kuknusSdk.StrKey.decodeEd25519PublicKey(pub);
 			pub = e2c.convertPublicKey(pub);
 			var secretData = sodium_api.crypto_box_seal(buf, pub);
@@ -34,6 +35,8 @@ export async function curveEncrypt(data: curveEncryptRequest):Promise<Response<c
             }
 			resolve(res);
 		} catch (error) {
+			console.log(error);
+			
             const res:Response<curveEncryptResponse> = {
                 status: responseStatus.reject,
                 type: actionType.curveEncrypt,
