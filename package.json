@@ -1,6 +1,6 @@
 {
   "name": "@kuknos/wallet-connect",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "./dist/src/kuknos-wallet-connect.js",
   "types": "./dist/src/kuknos-wallet-connect.d.ts",
