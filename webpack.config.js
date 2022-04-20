@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './src/kuknos-wallet-connect.ts',
@@ -21,7 +22,8 @@ module.exports = {
         stream: require.resolve('stream-browserify'),
         url: require.resolve('url/'),
         path: require.resolve("path-browserify"),
-        util: require.resolve("util/")
+        util: require.resolve("util/"),
+
     }
   },
   output: {
@@ -30,4 +32,5 @@ module.exports = {
     library: "kuknos-wallet-connect",
     libraryTarget: "umd" 
   },
+  
 };
