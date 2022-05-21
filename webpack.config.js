@@ -10,10 +10,14 @@ module.exports = {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /\.html$/i,
+        loader: "html-loader",
+      }
     ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['.tsx', '.ts', '.js', '.jsx'],
     fallback: {
         assert: require.resolve('assert'),
         crypto: require.resolve('crypto-browserify'),

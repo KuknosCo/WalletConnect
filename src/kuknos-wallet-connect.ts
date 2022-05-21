@@ -21,7 +21,7 @@ import {network} from './interfaces/setting.interface'
 import { buyToken_WalletConnect_client } from './actions/client/buyToken';
 import {Buffer} from 'buffer'
 import queryString from 'query-string'
-
+import {modalHTML, modalScript, modalCss} from './modal/modal'
 
 export * from './interfaces/action.interface'
 export * from './interfaces/setting.interface'
@@ -55,19 +55,15 @@ export class Client{
 
 
         if(savedType){
-
             if(savedType === walletType.browser_extension){
                 this.type = walletType.browser_extension
             }else{
                 this.type = walletType.wallet_connect
             }
-
-        }else if(options.wallet_type){
-            this.type = options.wallet_type 
+            localStorage.setItem('walletConnect_type', this.type)
         }
-        localStorage.setItem('walletConnect_type', this.type)
         
-            
+        
         if(options.browser_extension_url){
             this.extensionUrl = options.browser_extension_url
         }
@@ -143,27 +139,26 @@ export class Client{
         })
     }
 
-    private getWalletInfo(){        
-        let wallet:any = localStorage.getItem('walletConnect_wallet');        
-        try {
-            wallet = JSON.parse(wallet)
-            return wallet
-        } catch (error) {
-            throw new Error('Wallet not found. Connect to the wallet first')
+    private getWalletConnectLink():string{
+        const object: walletConnectLink = {
+            project_id: this.project_id,
+            meta: this.meta
         }
+        const link = Buffer.from(JSON.stringify(object)).toString('base64');
+        return 'wc-kuknos://'+link
+    }
+
+    private setWalletType(walletType: walletType ){
+        this.type = walletType
+        localStorage.setItem('walletConnect_type', walletType)
+    }
+
+    public setNetwork(network:network ){
+        this.network = network
+        localStorage.setItem('walletConnect_network', network)
     }
 
     public async onConnectionStatusChange(fn: ConnectionStatusFn){
-        /* this.socket?.on('connect', ()=>{
-            this.connectionStatus = true
-            fn(this.connectionStatus)
-        })
-
-        this.socket?.on('disconnect', ()=>{
-            this.connectionStatus = false
-            fn(this.connectionStatus)
-        }) */
-
         setInterval(async()=>{
             try {
                 await this.ping(actionType.getAccount)
@@ -180,85 +175,123 @@ export class Client{
         },1000 )
     }
 
-    public setNetwork(network:network ){
-        this.network = network
-        localStorage.setItem('walletConnect_network', network)
-    }
-
-    public setWalletType(walletType: walletType ){
-        this.type = walletType
-        localStorage.setItem('walletConnect_type', walletType)
-    }
-
-    public getWalletConnectLink():string{
-        const object: walletConnectLink = {
-            project_id: this.project_id,
-            meta: this.meta
-        }
-        const link = Buffer.from(JSON.stringify(object)).toString('base64');
-        return 'wc-kuknos://'+link
-    }
-
     public connect():Promise<Response<GetAccountResponse>>{
         return new Promise(async (resolve, reject)=>{
 
-            try {         
-
-                const param = queryString.parseUrl(window.location.href)
-
-                if(param.query.walletUUID){
-                    let reqData:Request<null> = {
-                        type: actionType.walletConnectRequest,
-                        client: {
-                            meta: this.meta,
-                            project_id: this.project_id
-                        },
-                        data: null
-                    }
-                    this.socket?.emit('send_data', {
-                        data: reqData,
-                        project_id: param.query.walletUUID,
-                    })
-
-                }else{
-                    const object: walletConnectLink = {
-                        project_id: this.project_id,
-                        meta: this.meta
-                    }
-                    window.parent.postMessage({
-                        type: 'wallet-connect-request',
-                        data: object
-                    }, '*')
-                }
-                
-                
-            } catch (error) {}
+            const modalElementScript = document.createElement('script');
+            const modalElementCss = document.createElement('style');
+            const modalElementHTML = document.createElement('div');
+            modalElementScript.innerHTML = modalScript
+            modalElementCss.innerHTML = modalCss
+            modalElementHTML.innerHTML = modalHTML
+            modalElementHTML.style.cssText = `
+                display: block; 
+                position: fixed; 
+                z-index: 1; 
+                left: 0;
+                top: 0;
+                width: 100%; 
+                height: 100%; 
+                overflow: auto; 
+                background-color: rgb(0,0,0); 
+                background-color: rgba(0,0,0,0.4);
+            `
             
-            try {
-                
-                switch (this.type) {
-                    case walletType.wallet_connect:
-                        this.socket?.on('receive_data' ,(d:Response<GetAccountResponse>) =>{                                                                                                              
-                            if(d.type === actionType.getAccount){  
-                                localStorage.setItem('walletConnect_connected', 'true')
-                                localStorage.setItem('walletConnect_network', this.network)   
-                                localStorage.setItem('walletConnect_type', this.type)                                                           
-                                resolve(d)
-                            }
-                        })               
-                        break;
+            document.head.append(modalElementCss)
+            document.body.append(modalElementHTML)
+            document.body.append(modalElementScript)
 
-                    case walletType.browser_extension:
+
+            window.parent.postMessage({
+                type: 'set-wallet-connect-qr',
+                text: this.getWalletConnectLink()
+            }, '*')
+
+
+            window.addEventListener('message' , async (e)=>{
+                if(e.data.type === 'close-connect-modal'){
+                    //remote modal elements
+                    modalElementCss.remove()
+                    modalElementHTML.remove()
+                    modalElementScript.remove()
+                    const res: Response<GetAccountResponse> = {
+                        status: responseStatus.reject,
+                        type: actionType.getAccount,
+                        message: 'Canceled by user',
+                        data: {
+                            public: ''
+                        }
+                    }
+                    reject(res)
+                }
+            })
+
+            window.addEventListener('message' , async (e)=>{
+                if(e.data.type === 'click-connect-btn'){
+                    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
+
+                        this.setWalletType(walletType.wallet_connect)
+                        const param = queryString.parseUrl(window.location.href)
+                        if(param.query.walletUUID){
+                            let reqData:Request<null> = {
+                                type: actionType.walletConnectRequest,
+                                client: {
+                                    meta: this.meta,
+                                    project_id: this.project_id
+                                },
+                                data: null
+                            }
+                            this.socket?.emit('send_data', {
+                                data: reqData,
+                                project_id: param.query.walletUUID,
+                            })
+
+                        }else{
+                            const object: walletConnectLink = {
+                                project_id: this.project_id,
+                                meta: this.meta
+                            }
+                            window.parent.postMessage({
+                                type: 'wallet-connect-request',
+                                data: object
+                            }, '*')
+                        }
+
+                    }else{
+
+                        this.setWalletType(walletType.browser_extension)
                         let data = await getAccount_browserExtension_client(this)
                         localStorage.setItem('walletConnect_connected', 'true')
                         localStorage.setItem('walletConnect_network', this.network)
                         localStorage.setItem('walletConnect_type', this.type) 
+
+                        //remote modal elements
+                        modalElementCss.remove()
+                        modalElementHTML.remove()
+                        modalElementScript.remove()
+                        
                         resolve(data)
-                        break
+
+                    }
+                    
                 }
-            } catch (error) {
-                reject(error)
-            }
+            })
+
+            this.socket?.on('receive_data' ,(d:Response<GetAccountResponse>) =>{                                                                                                              
+                if(d.type === actionType.getAccount){  
+                    localStorage.setItem('walletConnect_connected', 'true')
+                    localStorage.setItem('walletConnect_network', this.network)   
+                    localStorage.setItem('walletConnect_type', this.type)   
+                    
+                    //remote modal elements
+                    modalElementCss.remove()
+                    modalElementHTML.remove()
+                    modalElementScript.remove()
+
+                    resolve(d)
+                }
+            })   
+
         })
     
     }
@@ -471,8 +504,7 @@ export class Wallet{
     private walletAvailable: boolean = true;
 
     constructor(options: initOptions){
-       
-             
+        
         if(options.browser_extension_url){
             this.extensionUrl = options.browser_extension_url
         }
@@ -487,9 +519,6 @@ export class Wallet{
             this.meta = options.meta
         }
 
-        if(options.wallet_type){
-            this.type = options.wallet_type
-        }
     }
 
     
