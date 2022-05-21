@@ -1,7 +1,6 @@
 export enum walletType {
     browser_extension = "browser_extension",
     wallet_connect = "wallet_connect",
-    phone = "phone"
 }
 
 export enum network{
