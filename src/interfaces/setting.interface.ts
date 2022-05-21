@@ -12,7 +12,6 @@ export interface initOptions {
     browser_extension_url?: string
     relay_server_url?: string
     network?: network,
-    wallet_type?: walletType
     meta?: meta
     
 }
