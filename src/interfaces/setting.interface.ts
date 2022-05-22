@@ -39,7 +39,6 @@ export enum actionType {
     accountBalance = "get_balance",
     accountSetting = "get_setting",
     payment = "payment",
-    buyToken = "buy-token",
 
     ping = 'ping',
     walletConnectRequest = 'wallet-connect-request'

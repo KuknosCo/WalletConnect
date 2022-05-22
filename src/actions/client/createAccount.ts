@@ -1,18 +1,14 @@
 import { windowConfig } from "../../config/config";
-import { createAccountRequest, createAccountResponse } from "../../interfaces/action.interface";
+import { createAccountResponse } from "../../interfaces/action.interface";
 import { Response, responseStatus } from "../../interfaces/response.interface";
 import { actionType } from "../../interfaces/setting.interface";
 import { Client } from "../../kuknos-wallet-connect";
 import { Request } from "../../interfaces/request.interface";
 
-export function createAccount_browserExtension_client(client: Client, identifier: string):Promise<Response<createAccountResponse>>{
+export function createAccount_browserExtension_client(client: Client):Promise<Response<createAccountResponse>>{
     return new Promise((resolve , reject)=>{
-        if(!identifier){
-            reject('Identifier should not be empty')
-            return
-        }
         let confirmWin:any = window.open(
-            `${client.extensionUrl}/intent/create-account?identifier=${encodeURIComponent(identifier)}`,
+            `${client.extensionUrl}/intent/create-account?identifier=''`,
             "myWindow",
             `width=${windowConfig.width},height=${windowConfig.height},top=${windowConfig.top},left=${windowConfig.left},scrollbars=no`
         );
@@ -51,8 +47,7 @@ export function createAccount_browserExtension_client(client: Client, identifier
                     type: actionType.createAccount,
                     message: 'Canceled',
                     data: {
-                        public: '',
-                        signature: ''
+                        public: ''
                     }
                 }
                 reject(res)
@@ -63,7 +58,7 @@ export function createAccount_browserExtension_client(client: Client, identifier
     
 }
 
-export async function createAccount_WalletConnect_client(client: Client, identifier: string): Promise<Response<createAccountResponse>>{
+export async function createAccount_WalletConnect_client(client: Client): Promise<Response<createAccountResponse>>{
     return new Promise((resolve, reject) => {
         let wallet:any = localStorage.getItem('walletConnect_wallet');
         try {
@@ -72,14 +67,14 @@ export async function createAccount_WalletConnect_client(client: Client, identif
             throw new Error('Wallet not found. Connect to the wallet first')
         }
 
-        let reqData:Request<createAccountRequest> = {
+        let reqData:Request<any> = {
             type: actionType.createAccount,
             client: {
                 project_id: client.project_id,
                 meta: client.meta
             },
             data: {
-                identifier: identifier
+                identifier: ''
             }
         }
         client.socket?.emit('send_data', {

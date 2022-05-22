@@ -44,10 +44,6 @@ export interface changeTrustRequest{
 
 export interface createAccountResponse{
     public: string;
-	signature: string;
-}
-export interface createAccountRequest{
-    identifier: string
 }
 
 
