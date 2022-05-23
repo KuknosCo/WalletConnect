@@ -202,7 +202,7 @@ export class Client{
             document.body.append(modalElementScript)
 
 
-            window.parent.postMessage({
+            window.postMessage({
                 type: 'set-wallet-connect-qr',
                 text: this.getWalletConnectLink()
             }, '*')
