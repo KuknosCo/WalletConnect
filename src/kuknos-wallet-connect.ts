@@ -18,7 +18,6 @@ import { getAccountBalances } from './actions/client/getAccountBalances';
 import { getAccountSetting } from './actions/client/getAccountSetting';
 import { payment_browserExtension_client, payment_WalletConnect_client } from './actions/client/payment';
 import {network} from './interfaces/setting.interface'
-import { buyToken_WalletConnect_client } from './actions/client/buyToken';
 import {Buffer} from 'buffer'
 import queryString from 'query-string'
 import {modalHTML, modalScript, modalCss} from './modal/modal'
@@ -178,6 +177,7 @@ export class Client{
     public connect():Promise<Response<GetAccountResponse>>{
         return new Promise(async (resolve, reject)=>{
 
+
             const modalElementScript = document.createElement('script');
             const modalElementCss = document.createElement('style');
             const modalElementHTML = document.createElement('div');
@@ -202,7 +202,7 @@ export class Client{
             document.body.append(modalElementScript)
 
 
-            window.parent.postMessage({
+            window.postMessage({
                 type: 'set-wallet-connect-qr',
                 text: this.getWalletConnectLink()
             }, '*')
@@ -279,6 +279,7 @@ export class Client{
 
             this.socket?.on('receive_data' ,(d:Response<GetAccountResponse>) =>{                                                                                                              
                 if(d.type === actionType.getAccount){  
+                    this.setWalletType(walletType.wallet_connect)
                     localStorage.setItem('walletConnect_connected', 'true')
                     localStorage.setItem('walletConnect_network', this.network)   
                     localStorage.setItem('walletConnect_type', this.type)   
@@ -375,18 +376,18 @@ export class Client{
         })
     }
 
-    public createAccount(identifier:string): Promise<Response<createAccountResponse>>{
+    public createKeypair(): Promise<Response<createAccountResponse>>{
         return new Promise(async (resolve, reject)=>{
             try {
                 await this.ping(actionType.createAccount)
                 switch (this.type) {
                     case walletType.wallet_connect:
-                        let resW = await createAccount_WalletConnect_client(this, identifier)
+                        let resW = await createAccount_WalletConnect_client(this)
                         resolve(resW)        
                         break;
 
                     case walletType.browser_extension:
-                        let resE = await createAccount_browserExtension_client(this, identifier)
+                        let resE = await createAccount_browserExtension_client(this)
                         resolve(resE)
                         break
                     
@@ -467,23 +468,6 @@ export class Client{
                         resolve(resE)
                         break
                     
-                }
-            } catch (error) {
-                reject(error)
-            }
-        })
-    }
-
-    public buyToken(data:BuyTokenRequest): Promise<Response<BuyTokenResponse>>{
-        return new Promise(async (resolve, reject)=>{
-            try {
-                await this.ping(actionType.buyToken)
-                switch (this.type) {
-                    case walletType.wallet_connect:
-                        let resW = await buyToken_WalletConnect_client(this, data)
-                        resolve(resW)        
-                        break;
-
                 }
             } catch (error) {
                 reject(error)

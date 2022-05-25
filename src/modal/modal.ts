@@ -1279,13 +1279,13 @@ if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigat
   }
 
   document.getElementById('kuknos-connect-btn').onclick = function(){
-	window.parent.postMessage({
+	window.postMessage({
 		type: 'click-connect-btn'
 	}, '*')
   }
   
   document.getElementById('kuknos-close-icon').onclick = function(){
-	window.parent.postMessage({
+	window.postMessage({
 		type: 'close-connect-modal'
 	}, '*')
   }
