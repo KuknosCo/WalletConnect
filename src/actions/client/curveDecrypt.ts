@@ -24,7 +24,10 @@ export async function curveDecrypt_browserExtension_client(client: Client, ciphe
                     status: responseStatus.submit,
                     type: actionType.curveDecrypt,
                     message: '',
-                    data: data.data
+                    data: {
+                        plain_text: (data as any).data,
+                        public: ''
+                    }
                 }
                 window.removeEventListener("message", handleResponse);
                 confirmWin.close();
@@ -38,7 +41,10 @@ export async function curveDecrypt_browserExtension_client(client: Client, ciphe
                     status: responseStatus.reject,
                     type: actionType.curveDecrypt,
                     message: 'Canceled',
-                    data: data.data
+                    data: {
+                        plain_text: (data as any).data,
+                        public: ''
+                    }
                 }
                 reject(res)
             }
